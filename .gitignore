@@ -1,0 +1,34 @@
+# LaTeX intermediate / debug files
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.nav
+*.snm
+*.vrb
+*.bbl
+*.blg
+*.idx
+*.ilg
+*.ind
+*.run.xml
+
+# LaTeXmk / build artefacts
+latexmkrc
+
+# Temporary / editor files
+*.bak
+*~
+*.swp
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# ignore whole .vscode folder:
+.vscode/
