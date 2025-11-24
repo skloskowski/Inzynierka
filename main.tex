@@ -1,0 +1,77 @@
+% !TEX encoding = UTF-8 Unicode
+% !TeX TXS-program:compile = txs:///pdflatex/[--shell-escape] 
+
+\documentclass[12pt, twoside]{book}
+\input{latex-settings.tex}
+
+\frontmatter
+%check the current front page here:
+%https://wiz.pwr.edu.pl/en/students/thesis
+%and generate pdfs, and save in title_page folder.
+\begin{document}
+
+\includepdf[pages={1}]{title_page/title_page.pdf}
+\doublepage
+% Add table of contents
+\pagestyle{tableOfContentStyle}
+% Add abstract
+\pagenumbering{Roman}
+\input{chapters/abstract/abstract}
+\doublepage
+\tableofcontents 
+\doublepage
+% Set page style 
+\pagestyle{custom}
+\mainmatter
+ 
+% Create chapters
+
+% Introduction chapters
+\input{chapters/introduction/main}
+\input{chapters/related_work/main}
+
+% Main chapters
+\input{chapters/image_processing/main}
+\input{chapters/application_description/main}
+\input{chapters/data_acquisition/main}
+\input{chapters/implementation_analysis/main}
+
+% Conclusions
+\input{chapters/conclusions/main}
+
+% Redefine plain for 1st bibliography page style
+\resetformatting
+
+% Please read :
+% --- Bibliography ---
+\cleardoublepage
+\pagestyle{bibliographyStyle}
+\phantomsection
+\bibliographystyle{abbrv}
+\bibliography{bibliography}
+\addcontentsline{toc}{chapter}{Bibliografia}
+
+% --- List of Figures ---
+\cleardoublepage
+\pagestyle{ListofFiguresStyle}
+\phantomsection
+\listoffigures
+\addcontentsline{toc}{chapter}{Spis rysunków}
+
+% --- List of Tables ---
+\cleardoublepage
+\pagestyle{ListofTablesStyle}
+\phantomsection
+\listoftables
+\addcontentsline{toc}{chapter}{Spis tabel}
+\end{document}
+
+# ----- PYTANIA -----
+#
+# Lstlisting jak formatować napisać ifend loop end
+# https://www.doopyon.org/docs/publications/data2023-parisot-preprint.pdf
+# w jaki sposób jest określany szum w matrycach fotograficznych
+# 
+# jak artykul i oryginalny artykul (przyklad z bortle)
+#
+#

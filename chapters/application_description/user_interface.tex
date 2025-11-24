@@ -1,0 +1,37 @@
+\section{Interfejs użytkownika}\label{chapter:user_interface}
+
+Prosty i czytelny interfejs użytkownika jest wymaganą częścią programów zaprojektowanych dla użytkowników początkujących. Poniżej został opisany interfejs użytkownika wraz z krótką instrukcją użytkowania.
+
+Interfejs użytkownika został zaprojektowany upraszczając interakcję pomiędzy użytkownikiem a programem, nie pozbawiając go jednak podstawowych funkcjonalności programu. Na potrzeby obecnego działania programu zdecydowano się na wykorzystanie interfejsu konsolowego. Pozwoliło to na skupienie się na prawidłowym działaniu najważniejszych funkcjonalności programu. 
+
+Funkcję programu podzielone na trzy główne elementy:
+
+\begin{itemize}
+    \item Inicjalizacja obszaru roboczego.
+    \item Tworzenie klatek kalibracyjnych.
+    \item Stacking zdjęć obiektów głębokiego nieba.
+\end{itemize}
+
+Proces inicjalizacji programu polega na utworzeniu wykorzystywanej przez program struktury katalogów w wybranym folderze roboczym. Do inicjalizacji stosuje się poniższe polecenie.
+
+\begin{verbatim}
+.\FluxStack --init <workspace>
+\end{verbatim}
+
+W procesie kalibracji zdjęć łączy się dostarczone przez użytkownika fotografie kalibracyjne w klatki główne. Po wykonaniu tego procesu w katalogu \texttt{<workspace>\textbackslash masters} pojawią się, odpowiednio dla wybranych flag, gotowe klatki kalibracyjne. W przypadku braku flag program spróbuje utworzyć wszystkie trzy główne klatki kalibracyjne. Utworzenie klatek kalibracyjnych nie jest wymagane w dalszych etapach działania programu, przynoszą one jednak znaczne korzyści dla końcowej jakości wygenerowanego zdjęcia. Do kalibracji używa się poniższe polecenie. Flagi \texttt{-d -b -f} odnoszą się kolejno do utworzenia klatek dark, bias i flat. Prawidłowy sposób sporządzenia tych klatek przybliżono w rozdziale \ref{chapter:image_processing}.
+
+\begin{verbatim}
+.\FluxStack.exe --calibrate <workspace> [-d] [-b] [-f]
+\end{verbatim}
+
+W procesie stackowania zdjęcia z katalogu \texttt{lights} są łączone w obraz wynikowy działania programu korzystając z jednego z możliwych algorytmów. Algorytm wybiera się poprzez flagę \texttt{---method}. Dostępne algorytmy to średnia (\texttt{average}), mediana (\texttt{median}), kappa-sigma clipping (\texttt{kappasigma}) oraz auto adaptive weighted average (\texttt{adaptive}). Bez podania flagi \texttt{---method} program automatycznie wybiera metodę średniej. Dodatkowo użytkownik ma możliwość zapisania pliku wynikowego w wybranej przez niego lokalizacji korzystając z flagi \texttt{---out}. Bez podania flagi \texttt{---out} obraz zapisuje się w lokalizacji \texttt{masters\textbackslash stacked.tiff}. Poniżej znajduje się schemat polecenia pozwalającego na stacking obrazów.
+
+\begin{verbatim}
+.\FluxStack.exe --stack <workspace> 
+[--method=<average|median|kappasigma|adaptive>] [--out=<path>]
+\end{verbatim}
+
+W razie podania nieprawidłowych parametrów czy flag, bądź włączeniu programu bez żadnych flag, program przypomina użytkownikowi o możliwych funkcjach programu.
+
+
+

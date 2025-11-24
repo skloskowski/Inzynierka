@@ -1,0 +1,29 @@
+\section{Wymagania oraz technologie}\label{requirements_and_technologies}
+
+Biorąc pod uwagę istniejące technologie i narzędzia wykorzystywane w branży zdecydowano się na określenie następujących wymagań. \\
+
+\textbf{Wymagania funkcjonalne}
+
+\begin{enumerate}
+    \item Tworzenie nowego obszaru roboczego zawierającego podkatalogi wymagane do kalibracji i stackowania - bias, darks, flats, lights i masters.
+    \item Tworzenie głównych klatek kalibracyjnych na podstawie dostarczonych przez użytkownika zdjęć kalibracyjnych.
+    \item Wczytywanie zdjęć w wybranym formacie RAW oraz TIFF.
+    \item Korekcja zdjęć light z użyciem wcześniej utworzonych głównych klatek kalibracyjnych.
+    \item Automatyczne wyrównywanie zdjęć na podstawie wykrytych gwiazd.
+    \item Automatyczne nakładanie zdjęć obiektu głębokiego nieba jedną z czterech wybranych metod: średnia, mediana, kappa-sigma clipping lub auto adaptive weighted average.
+    \item Zapisywanie  obrazu wynikowego w domyślnej lokalizacji, bądź innej wybranej przez użytkownika.
+\end{enumerate}
+
+\textbf{Wymagania niefunkcjonalne}
+
+\begin{enumerate}
+    \item Kod źródłowy powinien być napisany w nowoczesnym i popularnym języku programowania.
+    \item Kod źródłowy powinien być modularny i umożliwiać łatwe rozszerzanie i nowe algorytmy stackowania.
+    \item Aplikacja powinna być odporna na błędy takie jak brakujące pliki, nieprawidłowe formaty czy niepoprawne ścieżki.
+    \item Aplikacja powinna działać prawidłowo przy łączeniu sześćdziesięciu zdjęć i poniżej na sprzęcie średniej klasy. \label{nonfunc_4}
+    \item Aplikacja powinna być desktopowa oraz mieć interfejs konsolowy.
+    \item Aplikacja powinna być przyjazna dla użytkowników mało-zaawansowanych - powinna pozwalać na uzyskanie obrazu wynikowego przy zastosowaniu trzech lub mniejszej ilości komend bez utraty funkcjonalności.
+    \item Aplikacja powinna umożliwiać łączenie przynajmniej pięciu zdjęć wraz z zbudowanymi głównymi klatkami kalibracyjnymi na dowolnym z dostępnych algorytmów poniżej dziewięćdziesięciu sekund. \label{nonfunc_7}
+\end{enumerate}
+
+Rozważając wymagania programu, zdecydowano się na korzystanie z języka C++ do programowania, gdyż oferuje on wysoką wydajność oraz szerokie możliwość optymalizacji wymagane przy przetwarzaniu dużej ilości danych. Do obsługi i wczytywania fotografii w formacie RAW zostanie użyta biblioteka LibRaw \cite{libraw}, do manipulacji obrazami i utworzenia funkcji kalibracji, detekcji gwiazd, rejestracji i nakładania zdjęć biblioteka OpenCV \cite{opencv}.

@@ -1,0 +1,53 @@
+\section{Metodyka eksperymentów}
+
+Badania przeprowadzano na komputerze stacjonarnym z systemem operacyjnym Windows 11. Przed wykonywaniem badań zakończono wszystkie zbędne procesy w celu zwiększenia stabilności działania programu. Badania zostały przeprowadzone na komputerze stacjonarnym z podanymi podzespołami:
+
+\begin{itemize}
+    \item Intel Core i7-8700
+    \item Pamięć RAM DDR4 2x8GB 2666MT/s
+    \item Dysk SSD NVME PCI-Express x4 gen. 3.
+\end{itemize}
+
+Prędkość odczytu danych z dysku może znacząco wpływać na czas działania programu. W celu realistycznego przedstawienia czasu działania programu zdecydowano się więc na przeprowadzenie badań dotyczących prędkości używano dysku. Do badań dysku SSD użyto darmowego programu CrystalDiskMark dostępnego na oficjalnej stronie producenta \cite{crystaldiskmark}. Wyniki badań prędkości dysku przedstawiono na rysunku \ref{fig:ssd_benchmark}. Program bada prędkość sekwencyjnego i losowego odczytu i zapisu w różnych warunkach.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.5\linewidth]{images/ssd_benchmark.png}
+    \caption{Wyniki testu wydajności dysku SSD.}
+    \label{fig:ssd_benchmark}
+\end{figure}
+
+W trakcie badań monitorowano stan podzespołów komputera przy użyciu aplikacji HWiNFO \cite{hwinfo}, nie zaobserwowano żadnych ograniczeń termicznych komponentów podczas działania programu w trakcie badań. Pozostałe informacje na temat systemu umieszczono na rysunku \ref{fig:hwinfo}.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.75\linewidth]{images/hwinfo.png}
+    \caption{Zrzut ekranu przedstawiający użyty sprzęt.}
+    \label{fig:hwinfo}
+\end{figure}
+
+Z dwóch obiektów astronomicznych wykonano serie fotografii, sposób wykonania fotografii i ich dokładny opis znajduje się w rozdziale \ref{chapter:data_acquisition}. Fotografie podzielono na zestawy do badań według tabeli \ref{tab:objectSets} opisanej w rozdziale \ref{chapter:data_acquisition}. Każdy z zestawów przetwarzano czterema zaimplementowanymi algorytmami - ich dokładna implementacja znajduje się w podrozdziale \ref{chapter:code_structure}. W każdym z badanych algorytmów badano czas działania przy użyciu biblioteki \texttt{std::chrono}. Badania jakości wykonano na podstawie zaimplementowanej metryki - szerokości połówkowej gwiazd.
+
+Szerokość połówkowa (\textit{full width at half maximum, FWHM}) to metryka opisująca szerokość profilu gwiazdy w połowie jej maksymalnej jasności, w przypadku implementacji wyznaczana w pikselach. Niższe wartości FWHM oznaczają ostrzejsze gwiazdy i tym samym większą ilość widocznych szczegółów. Według literatury profil natężenia gwiazdy można oszacować funkcją Gaussa \cite{1992A&A...259..701C}. W pracy zastosowano algorytm obliczający FWHM na podstawie dwuwymiarowego rozkładu Gaussa. Profil jasności gwiazdy na obrazie można oszacować funkcją przedstawioną w równaniu \eqref{eq:gauss}. Po przyjęciu średniej wartości wariancji rozmycia obrazu można obliczyć FWHM zgodnie z zależnością przedstawioną na równaniu \eqref{eq:fwhm}. 
+
+\begin{equation}\label{eq:gauss}
+    I(x,y) = I_0 \text{exp} \left( -\frac{(x-x_c)^2}{2\sigma^2_x}-\frac{(y-y_c)^2}{2\sigma^2_y} \right)
+\end{equation}
+
+gdzie,
+
+\begin{tabular}{l}
+$I_0$ - maksymalne natężenie \\
+$ (x_c, y_c)$ – środek gwiazdy \\
+$ \sigma_x, \sigma_y$ – rozmycie obrazu \\
+\end{tabular} 
+
+\vspace{0.5cm}
+
+\begin{equation}\label{eq:fwhm}
+    \text{FWHM} = 2\sqrt{2 \ln{2}} \cdot\sigma
+\end{equation}
+
+Przy implementacji stosuje się parametr wielkości wycinka nieba przy obliczaniu FWHM - dobranie zbyt dużego okna może spowodować artefakty spowodowane pozycją okolicznych gwiazd, lecz przy zbyt małym oknie wyniki będą nieprawidłowe dla gwiazd większych niż wybrane okno. W późniejszych badaniach wartości FWHM będą przedstawione dla różnych wielkości okna. Implementacja oblicza FWHM dla wszystkich wykrytych gwiazd, jednak wynikiem końcowym będzie mediana FWHM wszystkich wykrytych gwiazd.
+
+% Szczytowy stosunek sygnału do szumu (\textit{peak signal-to-noise ratio, PSNR}) określa poziom szumu w obrazie w porównaniu z obrazem referencyjnym. Korzystając z PSNR można ocenić względny wpływ nakładania zdjęć do poprawę stosunku sygnału do szumu. Techniki oszacowania stosunku sygnału do szumu dla zaawansowanych systemów opisano w książce \cite{Heyer2004WFPC2}

@@ -1,0 +1,62 @@
+This is BibTeX, Version 0.99d
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+Reallocating 'name_of_file' (item size: 1) to 6 items.
+The style file: abbrv.bst
+Reallocating 'name_of_file' (item size: 1) to 13 items.
+Database file #1: bibliography.bib
+Warning--to sort, need author or key in DeepSkyStacker
+Warning--to sort, need author or key in PixInsight
+Warning--to sort, need author or key in Siril
+Warning--to sort, need author or key in photonstophotos
+Warning--to sort, need author or key in libraw
+Warning--to sort, need author or key in opencv
+Warning--to sort, need author or key in staradventurer
+Warning--to sort, need author or key in ngc
+Warning--to sort, need author or key in lightpollutionmap
+Warning--to sort, need author or key in crystaldiskmark
+Warning--to sort, need author or key in hwinfo
+Warning--empty chapter and pages in doi:10.2514/6.2025-99706
+Warning--empty publisher in doi:10.2514/6.2025-99706
+You've used 20 entries,
+            2118 wiz_defined-function locations,
+            600 strings with 6580 characters,
+and the built_in function-call counts, 4297 in all, are:
+= -- 414
+> -- 139
+< -- 0
++ -- 64
+- -- 42
+* -- 196
+:= -- 645
+add.period$ -- 64
+call.type$ -- 20
+change.case$ -- 80
+chr.to.int$ -- 0
+cite$ -- 33
+duplicate$ -- 161
+empty$ -- 450
+format.name$ -- 42
+if$ -- 966
+int.to.chr$ -- 0
+int.to.str$ -- 20
+missing$ -- 7
+newline$ -- 107
+num.names$ -- 18
+pop$ -- 178
+preamble$ -- 1
+purify$ -- 61
+quote$ -- 0
+skip$ -- 114
+stack$ -- 0
+substring$ -- 123
+swap$ -- 20
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 76
+warning$ -- 13
+while$ -- 19
+width$ -- 22
+write$ -- 202
+(There were 13 warnings)

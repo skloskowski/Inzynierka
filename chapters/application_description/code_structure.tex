@@ -1,0 +1,397 @@
+\section{Struktura kodu}\label{chapter:code_structure}
+
+Kod źródłowy został zorganizowany modularnie z możliwością dodania nowych komponentów i rozszerzenia funkcjonalności programu w przyszłości. Poniżej znajduje się ogólny opis struktury programu wraz z częściami rzeczywistego kodu źródłowego programu z wyjaśnieniami.
+
+Główna część programu została rozbita na pliku źródłowe zgodnie z grafiką poniżej.
+
+\dirtree{%
+.1 src/.
+.2 utils/.
+.3 ImageIO.cpp.
+.3 ImageIO.hpp.
+.2 App.cpp.
+.2 App.hpp.
+.2 Calibrator.cpp.
+.2 Calibrator.hpp.
+.2 ImageProcessor.cpp.
+.2 ImageProcessor.hpp.
+.2 main.cpp.
+.2 Register.cpp.
+.2 Register.hpp.
+.2 Stacker.cpp.
+.2 Stacker.hpp.
+} 
+
+\vspace{0.5cm}
+
+Klasa ImageIO jest odpowiedzialna za czytanie oraz zapisywanie plików użytych przez program. Do wczytywania plików RAW stosowanych przez aplikację użyta została biblioteka LibRaw. Stosowane do testowania zdjęcia są w formacie 14-bitowym .NEF jednak programowo stosuje się 16-bitowe kontenery do przechowywania informacji o pikselach. Przy wczytywaniu zdjęć w celu uzyskania fotografii bez skalowania i innych domyślnych opcji mogących wpłynąć na wartości pikseli na zdjęciu należy zastosować odpowiednie parametry. Do wczytywania innych plików takich jak fotografie kalibracyjne, zapisywane w formacie .tiff, użyto wbudowanego narzędzia z biblioteki OpenCV. Kod Źródłowy \ref{lst:single_load} przedstawia fragment implementacji funkcji do wczytywania pojedynczego zdjęcia - przedstawiono parametry użyte do prawidłowego wczytywania plików RAW. Do wczytywania wielu zdjęć stworzono nową funkcję, która obsługuje wczytywanie wielu zdjęć jednocześnie dzięki wielowątkowości.
+
+\begin{lstlisting}[language=C++, caption={Fragment funkcji \texttt{load} z klasy ImageIO}, label={lst:single_load}]
+rawProcessor.imgdata.params.output_bps = 16;
+rawProcessor.imgdata.params.no_auto_bright = 1;
+rawProcessor.imgdata.params.use_camera_wb = 0;
+rawProcessor.imgdata.params.use_auto_wb = 0;
+rawProcessor.imgdata.params.gamm[0] = 1.0f;
+rawProcessor.imgdata.params.gamm[1] = 1.0f;
+rawProcessor.imgdata.params.user_mul[0] = 1.0f;
+rawProcessor.imgdata.params.user_mul[1] = 1.0f;
+rawProcessor.imgdata.params.user_mul[2] = 1.0f;
+rawProcessor.imgdata.params.user_mul[3] = 1.0f;
+
+\end{lstlisting}
+
+Klasa App pełni rolę modułu sterującego działanie aplikacją. Klasa została napisana jako fasada ukrywająca wewnętrzną złożoność użytych komponentów. 
+
+Klasa Calibrator odpowiada za operacje związane z przygotowaniem klatek kalibracyjnych oraz korekcję obrazów użytych przez użytkownika. Zawiera funkcje tworzące trzy użyte w programie klatki kalibracyjne i nałożenie ich na zdjęcia przy procesie kalibracji. Klatki kalibracyjne są tworzone poprzez nakładanie fotografii metodą mediany następnie ich odpowiednią normalizacją. 
+
+Klasa ImageProcessor gromadzi funkcje związane z podstawowym przetwarzaniem obrazów. Klasa zawiera funkcje odpowiedzialne za korektę balansu bieli oraz przygotowaniem obrazu do wykrywania zdjęć poprzez wyodrębnienie tła obrazu.
+
+Klasa Register odpowiada za elementy rejestracji obrazu jakimi są detekcja gwiazd na fotografii oraz obliczenie odpowiednich transformacji przed nałożeniem zdjęć. Do wykrywania gwiazd na fotografiach użyto wbudowanej w bibliotekę OpenCV funkcji \texttt{SimpleBlodDetector} z odpowiednimi parametrami przedstawionymi w kodzie źródłowym \ref{lst:register_params}. Przed wykryciem gwiazd obraz należało przekonwertować na obraz ośmiobitowy z jednym kanałem - zdecydowano się na użycie kanału zielonego, gdyż oferuje on największą ilość informacji w klasycznych matrycach z filtrem Bayer \cite{Cheremkhin_2014}. Parametry zostały dobrane empirycznie na podstawie danych testowych - planowana liczba wykrytych gwiazd wynosiła od 50 do 150 co pozwala na wysokie prawdopodobieństwo pokrycia się przynajmniej trzech obiektów wymaganych do obliczenia transformacji obrazu. Parametr \texttt{starDetectionTreshold} został ustawiony na 0,7.
+
+\begin{lstlisting}[language=C++, caption={Fragment funkcji \texttt{detectStars} z klasy Register}, label={lst:register_params}]
+params.filterByArea = true;
+params.minArea = 30;
+params.maxArea = 200;
+params.filterByCircularity = true;
+params.minCircularity = static_cast<float>(starDetectionThreshold);
+params.filterByInertia = true;
+params.minInertiaRatio = static_cast<float>(starDetectionThreshold);
+params.filterByConvexity = true;
+params.minConvexity = static_cast<float>(starDetectionThreshold);
+params.filterByColor = true;
+params.blobColor = 255;
+\end{lstlisting}
+
+Obliczenie odpowiednich transformacji jest drugim etapem po rozpoznaniu gwiazd pozwalający na prawidłowe nakładanie zdjęć. Do obliczenia przesunięcia zdjęć zastosowano transformację afiniczną opartą za geometrii trójkątów i ich niezmiennikach. Dla zdjęcia referencyjnego należy najpierw wyznaczyć wszystkie możliwe trójki punktów. Zastosowano jednak ograniczenie do maksymalnie 5000 trójek w celu ograniczenia wymagań sprzętowych - większa ilość nie wpływa znacząco na jakość końcowej transformacji. Dla każdego trójkąta wyznaczane są dwa niezmienniki - stosunek średniego boku do najkrótszego oraz stosunek najdłuższego boku do najkrótszego. Następnie te same informacje są przetwarzane dla każdego zdjęcia docelowego. Porównuje się następnie trójkąty referencyjne z tymi z obrazu docelowego. Uznaje się, że trójkąt docelowy jest zgodny z trójkątem docelowym jeśli jego niezmienniki różnią się o mniej niż ustalona tolerancja \texttt{ratioTol = 0,03}. Do oszacowania transformacji po dopasowaniu trójkątów wyznaczana jest transformacja afiniczna jak przedstawiono w równaniu \eqref{eq:affine}. Programowo wykorzystano implementację \texttt{estimateAffinePartial2D} z biblioteki OpenCV.
+
+\begin{equation}\label{eq:affine}
+    T(x) = A \cdot x + b
+\end{equation}
+
+W celu ustalenia jakości transformacji program wykonuje tą transformację na punktach a następnie porównuje położenie gwiazd. Jeżeli odpowiadające sobie gwiazdy leżą po transformacji w odległości mniejszej niż tolerancja \texttt{inlierTol2 = 1.0} pikseli to program zalicza je jaką prawidłową transformację. Poprawność transformacji bada się dla każdego punktu i jeżeli ilość odpowiadających gwiazd jest większa niż 80\% gwiazd znalezionych na obrazie referencyjnym uznaje się, że transformacja jest prawidłowa. Takie podejście zapewnia dobrej jakości obraz końcowy jest jednak wymagające obliczeniowo. Prawidłowe oszacowanie transformacji jest jednak niezbędnym elementem to uzyskania wysokiej jakości zdjęcia. 
+
+W kodzie źródłowym \ref{lst:estimate_transform} przedstawiono fragment kodu użytego w programie odpowiadający za dopasowanie trójkątów pomiędzy obrazem referencyjnym a obrazem docelowym oraz oszacowanie transformacji afinicznej na podstawie zgodnych trójek gwiazd.
+
+\begin{lstlisting}[language=C++, caption={Fragment funkcji \texttt{estimateTransformWithRefTriangles} z klasy Register}, label={lst:estimate_transform}]
+for (const auto& tri : refTriangles) {
+  if (std::abs(tri.ratio1 - r1t) < ratioTol && std::abs(tri.ratio2 - r2t) < ratioTol) {
+    // estimate affine from these three correspondences
+    std::array<cv::Point2f,3> refTri = { refStars[tri.i], refStars[tri.j], refStars[tri.k] };
+    std::array<cv::Point2f,3> tgtTri = { targetStars[i], targetStars[j], targetStars[k] };
+    std::vector<cv::Point2f> refVec(refTri.begin(), refTri.end());
+    std::vector<cv::Point2f> tgtVec(tgtTri.begin(), tgtTri.end());
+    cv::Mat affine = cv::estimateAffinePartial2D(tgtVec, refVec);
+    if (affine.empty()) continue;
+
+    double a00 = affine.at<double>(0,0), a01 = affine.at<double>(0,1), a02 = affine.at<double>(0,2);
+    double a10 = affine.at<double>(1,0), a11 = affine.at<double>(1,1), a12 = affine.at<double>(1,2);
+
+    int inliers = 0;
+    for (const auto& pt : targetStars) {
+      double tx = a00 * pt.x + a01 * pt.y + a02;
+      double ty = a10 * pt.x + a11 * pt.y + a12;
+      for (const auto& refPt : refStars) {
+        double dx = tx - refPt.x;
+        double dy = ty - refPt.y;
+        if (dx*dx + dy*dy < inlierTol2) { ++inliers; break; }
+      }
+    }
+
+    if (inliers > bestScore) {
+      bestScore = static_cast<float>(inliers);
+      bestAffine = affine;
+      if (inliers > 0.8f * static_cast<float>(refStars.size())) {
+        return bestAffine;
+      }
+    }
+  }
+}
+\end{lstlisting}
+
+Klasa Stacker zawiera wszystkie dostępne metody nakładania zdjęć - średnią, medianę, kappa-sigma clipping oraz auto adaptive weighted average. Każda z metod nakładania zdjęć została rozbita na osobną funkcję.
+
+Podstawową metodą nakładania zdjęć jest średnia arytmetyczna, której implementację przedstawiono w kodzie źródłowym \ref{lst:stack_average}. Każde zdjęcie jest programowo konwertowane do 64-bitowej głębi koloru w celu zminimalizowania utraty danych podczas sumowania. Obraz wynikowy jest następnie przekształcany do formatu 16-bitowego, który stanowi finalny efekt procesu. Metoda średniej, choć najmniej wymagająca obliczeniowo spośród omawianych, przy niewielkiej liczbie klatek nie zapewnia skutecznego odrzucania niepożądanych pikseli, na przykład pochodzących od przelatujących samolotów lub innych artefaktów. Stanowi jednak dobry wzór dla uzyskania dobrego stosunku sygnału do szumu. Złożoność obliczeniowa tego algorytmu jest liniowa.
+
+\begin{lstlisting}[language=C++, caption={Funkcja \texttt{stackAverage} z klasy Stacker}, label={lst:stack_average}]
+cv::Mat Stacker::stackAverage(const std::vector<cv::Mat>& images) {
+  if (images.empty()) return cv::Mat();
+
+  cv::Mat sum = cv::Mat::zeros(images[0].size(), CV_64FC3);
+  for (const auto& img : images) {
+    cv::Mat img64;
+    img.convertTo(img64, CV_64FC3);
+    sum += img64;
+  }
+  sum /= static_cast<double>(images.size());
+
+  cv::Mat result;
+  sum.convertTo(result, CV_16UC3);
+  return result;
+}
+\end{lstlisting}
+
+Drugą z zastosowanych metod nakładania obrazów jest mediana, której implementacje przedstawiono w kodzie źródłowym \ref{lst:stack_median}. W przeciwieństwie do metody średniej charakteryzuje się skuteczniejszym odrzucaniem artefaktów. Dla każdego piksela i każdego kanału koloru zbierane są wartości ze wszystkich klatek i następnie wybierana jest wartość środkowa z nich. Wymaganie posortowania w naiwnym algorytmie odnalezienia mediany powoduje, że złożoność obliczeniowa tego algorytmy jest logarytmiczna zgodnie z równaniem \eqref{median_complexity}.
+
+\begin{equation}\label{median_complexity}
+    T(M, N) = O(M \cdot N \log N)
+\end{equation}
+
+gdzie,
+
+\begin{tabular}{l}
+$M = w \cdot h \cdot c$ - liczba próbek (pikseli dla każdego kanału zdjęcia) \\
+$N$ – liczba klatek \\
+\end{tabular}
+
+\vspace{0.5cm}
+
+\begin{lstlisting}[language=C++, caption={Funkcja \texttt{stackMedian} z klasy Stacker}, label={lst:stack_median}]
+cv::Mat Stacker::stackMedian(const std::vector<cv::Mat>& images) {
+  if (images.empty()) return cv::Mat();
+
+  int rows = images[0].rows;
+  int cols = images[0].cols;
+  int channels = images[0].channels();
+  int nImgs = static_cast<int>(images.size());
+
+  cv::Mat medianImage(images[0].size(), images[0].type());
+
+  // For each channel
+  for (int c = 0; c < channels; ++c) {
+    // Prepare a stack for this channel
+    std::vector<cv::Mat> channelStack(nImgs);
+    for (int i = 0; i < nImgs; ++i) {
+      cv::extractChannel(images[i], channelStack[i], c);
+    }
+
+    // Stack into a 3D array for median computation
+    cv::Mat stack3d(rows, cols, CV_16UC(nImgs));
+    for (int i = 0; i < nImgs; ++i) {
+      for (int y = 0; y < rows; ++y) {
+        const ushort* src = channelStack[i].ptr<ushort>(y);
+        ushort* dst = stack3d.ptr<ushort>(y) + i;
+        for (int x = 0; x < cols; ++x) {
+          dst[x * nImgs] = src[x];
+        }
+      }
+    }
+
+    // Compute median for each pixel
+    cv::Mat medianChannel(rows, cols, CV_16U);
+    std::vector<ushort> pixelVals(nImgs);
+    for (int y = 0; y < rows; ++y) {
+      for (int x = 0; x < cols; ++x) {
+        for (int i = 0; i < nImgs; ++i) {
+          pixelVals[i] = stack3d.at<ushort>(y, x * nImgs + i);
+        }
+        std::nth_element(pixelVals.begin(), pixelVals.begin() + nImgs / 2, pixelVals.end());
+        medianChannel.at<ushort>(y, x) = pixelVals[nImgs / 2];
+      }
+    }
+
+  cv::insertChannel(medianChannel, medianImage, c);
+  }
+
+  return medianImage;
+}
+\end{lstlisting}
+
+Kolejną metodą wykorzystywaną w programie, przedstawioną w kodzie źródłowym \ref{lst:stack_kappasigma}, jest metoda nakładania zdjęć Kappa-Sigma Clipping. Zaimplementowana funkcja stosowana jest do odrzucania wartości odstających na podstawie danych statystycznych wartości sygnału. Dla każdego piksela obliczana jest średnia oraz odchylenie standardowe, po czym wartości znajdujące się poza zakresem przedstawionym na równaniu \eqref{eq:kappa_outliers}. Algorytm jest iteracyjny, więc po każdym odrzuceniu obliczane są nowe wartości średniej i odchylenia standardowego stabilizując wynik.
+
+\begin{equation}\label{eq:kappa_outliers}
+    \mu \pm \kappa \cdot \sigma
+\end{equation}
+
+gdzie,
+
+\begin{tabular}{l}
+$\mu$ - średnia jasność piksela \\
+$\kappa$ –  parametr odchyleń od wartości średniej \\
+$\sigma$ – odchylenie standardowe jasności piksela \\
+\end{tabular} 
+
+\vspace{0.5cm}
+
+Metoda pozwala na efektywne usunięcie artefaktów ze zdjęcia, lecz w przeciwieństwie do algorytmu mediany nie traci przy tym na końcowym stosunku ilości sygnału do szumu. Dodatkową zaletą jest również brak ograniczeń precyzji do pojedynczej wartości lecz uśrednienie pikseli, które zostały po odrzuceniu. W przeciwieństwie do poprzednich dwóch algorytmów należy podać odpowiednie parametry działania programu - dopuszczalne odchylenie standardowe oraz ilość wymaganych iteracji na obrazie.
+
+Implementacja programu posiada dodatkową optymalizację - w razie braku odcięcia pikseli algorytm zaprzestaje działanie przedwcześnie, unika tym niepotrzebnego liczenia bez zmiany końcowego wyniku. Ostatecznym zabezpieczeniem jest ochrona przed odcięciem wszystkich wartości - program wraca wtedy do poprzednich wartości i zaprzestaje odcinania. Podczas działania algorytmu ustawiono wartości \texttt{kappa = 3} oraz \texttt{maxIterations = 5}.
+
+\begin{lstlisting}[language=C++, caption={Funkcja \texttt{stackKappaSigmaClipping} z klasy Stacker}, label={lst:stack_kappasigma}]
+cv::Mat Stacker::stackKappaSigmaClipping(const std::vector<cv::Mat>& images, float kappa, int maxIterations) {
+  if (images.empty()) return cv::Mat();
+
+  int rows = images[0].rows;
+  int cols = images[0].cols;
+  int channels = images[0].channels();
+  int nImgs = static_cast<int>(images.size());
+
+  cv::Mat result(images[0].size(), images[0].type());
+
+  // For each channel
+  for (int c = 0; c < channels; ++c) {
+    // Prepare a stack for this channel
+    std::vector<cv::Mat> channelStack(nImgs);
+    for (int i = 0; i < nImgs; ++i)
+      cv::extractChannel(images[i], channelStack[i], c);
+
+    cv::Mat outChannel(rows, cols, CV_16U);
+
+    // For each pixel
+    for (int y = 0; y < rows; ++y) {
+      for (int x = 0; x < cols; ++x) {
+        std::vector<float> vals(nImgs);
+        for (int i = 0; i < nImgs; ++i)
+          vals[i] = channelStack[i].at<ushort>(y, x);
+
+        for (int iter = 0; iter < maxIterations; ++iter) {
+          // Compute mean and stddev
+          float sum = 0, sum2 = 0;
+          for (float v : vals) { sum += v; sum2 += v * v; }
+          float mean = sum / vals.size();
+          float stddev = std::sqrt(sum2 / vals.size() - mean * mean);
+
+          // Clip values outside mean +- kappa * stddev
+          std::vector<float> newVals;
+          for (float v : vals)
+            if (std::abs(v - mean) <= kappa * stddev)
+              newVals.push_back(v);
+
+          if (newVals.size() == vals.size()) break; // No more outliers
+          if (newVals.empty()) break; // All clipped, fallback to previous
+            vals = std::move(newVals);
+        }
+
+        // Output mean of remaining values
+        double sum = 0;
+        for (double v : vals) sum += v;
+        outChannel.at<ushort>(y, x) = static_cast<ushort>(sum / vals.size() + 0.5);
+      }
+    }
+
+    cv::insertChannel(outChannel, result, c);
+  }
+
+    return result;
+}
+\end{lstlisting}
+
+Ostatnią implementowaną metodą jest auto adaptive weighted average, której implementacje przedstawiono w kodzie źródłowym \ref{lst:stack_adaptive}. Metoda została oparta na procedurach opisanych w pracy Stetsona poświęconej technikom obróbki fotografii na matrycach CCD \cite{Stetson1994}.
+
+W implementacji każdy wykonany pomiar (wartość piksela) otrzymuje wagę zależną od tego, jak bardzo odbiega od wartości oczekiwanej. Metoda adaptacyjna stopniowa zmniejsza wpływ pikseli odstających poziomem szumu czy takich, które posiadają inne artefakty. Podstawowym elementem działania programu jest zastosowana funkcja ważenia przedstawiona w równaniu \eqref{eq:adaptive_weight}.
+
+\begin{equation}\label{eq:adaptive_weight}
+    w_i = \frac{1}{1 + (\frac{|r_i|}{\alpha})^\beta}
+\end{equation}
+
+gdzie,
+
+\begin{tabular}{l}
+$\alpha$ - parametr regulujący czułość na odchylenia \\
+$\beta$ –  parametr regulujący szybkość spadku \\
+$r_i$ – różnica pomiędzy wartością piksela a aktualnym oszacowaniem sygnału \\
+$w_i$ - przydzielona waga \\
+\end{tabular} 
+
+\vspace{0.5cm}
+
+Jako początkowe oszacowanie wartości pikseli używa się mediany wartości pikseli na każdym kanale. Dla każdej iteracji działania programu obliczana jest waga i aktualizowana jest nowa wartość. Dzięki braku odrzucania wartości jak w algorytmie Kappa-Sigma Clipping zmniejszanie wpływu nietypowych pikseli jest łagodniejsze a zachowanych jest więcej szczegółów niż w przypadku użycia algorytmów mediany. Istnieje również większa elastyczność, ponieważ można używać różne funkcje ważenia i stosować parametry $\alpha$ oraz $\beta$. 
+
+Wymaganie pamięciowe podstawowej implementacji algorytmu są jednak nieakceptowalne i wpływają znacząco dla czas działania programu spowodowane narzutami korzystania z pamięci wirtualnej komputera. Żeby spełnić wymaganie niefunkcjonalne \ref{nonfunc_7} i zwiększyć stabilność działania programu dla większej ilości zdjęć jak opisano w wymaganiu niefunkcjonalnym \ref{nonfunc_4} należało zaimplementować optymalizacje pamięciowe programu. W tym celu zastosowano technikę ograniczającą ilość załadowanych jednocześnie elementów do pamięci RAM dzięki podziale obrazu na mniejsze fragmenty i przetwarzaniu ich sekwencyjnie. W implementacji obliczana jest maksymalna liczba wierszy \texttt{tileH} zgodnie z ograniczeniem pamięciowym \texttt{maxBytes} wyznaczonym na 64MiB. Każdy kawałek jest konwertowany do dokładniejszego formatu i zwalniany przed wczytaniem kolejnego do pamięci.
+
+\begin{lstlisting}[language=C++, caption={Funkcja \texttt{stackAutoAdaptiveWeightedAverage} z klasy Stacker}, label={lst:stack_adaptive}]
+cv::Mat Stacker::stackAutoAdaptiveWeightedAverage(const std::vector<cv::Mat>& frames, float alpha, float beta, int iterations) {
+  if (frames.empty()) return cv::Mat();
+
+  const int rows = frames[0].rows;
+  const int cols = frames[0].cols;
+  const int nImgs = static_cast<int>(frames.size());
+  const int channels = 3;
+
+  // bytes per row across all images
+  const uint64_t bytesPerRowAllImgs = (uint64_t)cols * (uint64_t)channels * sizeof(float) * (uint64_t)nImgs;
+  const uint64_t maxBytes = 64ULL * 1024ULL * 1024ULL;
+
+  int tileH = static_cast<int>(std::max<uint64_t>(1, std::min<uint64_t>((uint64_t)rows, maxBytes / std::max<uint64_t>(1, bytesPerRowAllImgs))));
+  if (tileH <= 0) tileH = 1;
+
+  bool tiled = (tileH < rows);
+  cv::Mat result(frames[0].size(), CV_32FC3);
+
+  // Reusable temporaries
+  std::vector<float> vals(nImgs);
+  std::vector<float> residuals(nImgs);
+  std::vector<float> weights(nImgs);
+  std::vector<float> tmpVec;
+  tmpVec.reserve(nImgs);
+  std::vector<cv::Mat> tile32;
+  tile32.resize(nImgs);
+
+  // Process tiles
+  for (int y0 = 0; y0 < rows; y0 += tileH) {
+    int y1 = std::min(rows, y0 + tileH);
+    int curH = y1 - y0;
+
+    for (int i = 0; i < nImgs; ++i) {
+      cv::Mat srcTile = frames[i].rowRange(y0, y1);
+      srcTile.convertTo(tile32[i], CV_32FC3);
+      if (!tile32[i].isContinuous()) tile32[i] = tile32[i].clone();
+    }
+
+    // process each row within the current tile
+    for (int ty = 0; ty < curH; ++ty) {
+      std::vector<const float*> rowPtrs(nImgs);
+      for (int i = 0; i < nImgs; ++i) rowPtrs[i] = tile32[i].ptr<float>(ty);
+
+      float* outRow = result.ptr<float>(y0 + ty);
+
+      for (int x = 0; x < cols; ++x) {
+        const int base = x * channels;
+
+        for (int c = 0; c < channels; ++c) {
+          int m = 0;
+          for (int i = 0; i < nImgs; ++i)
+            vals[m++] = rowPtrs[i][base + c];
+
+          // median initial guess
+          tmpVec.assign(vals.begin(), vals.begin() + m);
+          std::nth_element(tmpVec.begin(), tmpVec.begin() + (m / 2), tmpVec.end());
+          float mu = tmpVec[m / 2];
+
+          // iterative reweighting
+          for (int it = 0; it < iterations; ++it) {
+            float wsum = 0.0f;
+
+            for (int i = 0; i < m; ++i) {
+              residuals[i] = vals[i] - mu;
+              float w = 1.0f / (1.0f + std::powf(std::abs(residuals[i]) / alpha, beta));
+              weights[i] = w;
+              wsum += w;
+            }
+
+            if (wsum == 0.0f) break;
+
+            float new_mu = 0.0f;
+            for (int i = 0; i < m; ++i) {
+              weights[i] /= wsum;
+              new_mu += weights[i] * vals[i];
+            }
+
+            mu = new_mu;
+          }
+
+          outRow[base + c] = mu;
+        }
+      }
+    }
+
+    // release tile buffers early if large
+    for (int i = 0; i < nImgs; ++i) tile32[i].release();
+  }
+
+  // convert back to original type
+  cv::Mat out;
+  result.convertTo(out, frames[0].type());
+  return out;
+}
+
+\end{lstlisting}

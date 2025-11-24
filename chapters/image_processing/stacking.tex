@@ -1,0 +1,105 @@
+\section{Stacking}
+
+Stacking zdjęć jest procesem przetwarzania cyfrowych zdjęć polegającym na połączeniu wielu fotografii tego samego wycinka nocnego nieba lub wskazanego obiektu głębokiego nieba w celu osiągnięcia większego stosunku sygnału do zakłóceń (ang. \textit{Signal-to-Noise Ratio}, SNR) oraz ogólnej redukcji szumu na końcowym zdjęciu \cite{Hainaut2005}. Relację sygnału do szumu dla pojedynczej ekspozycji przedstawia równanie \eqref{eq:snr}:
+
+\begin{equation}\label{eq:snr}
+\text{SNR} = \frac{S}{\sqrt{S + \text{Sky} + \text{Dark} + N_{\mathrm{RON}}^2}}
+\end{equation}
+
+gdzie: \\
+
+\begin{tabular}{l}
+$S = s \cdot t = s \cdot N_\mathrm{DIT} \cdot \mathrm{DIT}$ – całkowity sygnał pochodzący od obiektu [\elec] \\
+$\text{Sky}$ – szum tła nieba [\elec] \\
+$\text{Dark}$ – szum prądu ciemnego [\elec] \\
+$N_{\mathrm{RON}}$ – szum odczytu detektora [\elec] \\
+$N_\mathrm{DIT}$ – liczba ekspozycji \\
+$\mathrm{DIT}$ – czas pojedynczej ekspozycji [s] \\
+$s$ – liczba elektronów zgromadzonych na sekundę od obiektu [\elec] \\ \\
+\end{tabular}
+
+Dla wielu połączonych ekspozycji SNR wzrasta w przybliżeniu jak pierwiastek liczby klatek, co pokazuje równanie \eqref{eq:snr_stack}, gdzie $N$ oznacza liczbę użytych klatek w procesie stackingu.
+
+\begin{equation}\label{eq:snr_stack}
+\text{SNR}_\text{stack} \approx \sqrt{N} \cdot \text{SNR}_\text{single}
+\end{equation}
+
+Programy do przetwarzania fotografii obiektów głębokiego nieba oferują wiele algorytmów do tego procesu. Przeanalizowano jednak cztery metody, które reprezentują różne podejścia do poprawy jakości obrazu.
+
+\begin{itemize}
+    \item \textbf{Średnia}
+    
+    Metoda średniej jest jedną z najczęściej stosowanych ze względu na prostotę implementacji oraz niskie wymagania sprzętowe, co stanowi istotną zaletę przy przetwarzaniu dużych zbiorów danych. Każdy piksel wynikowego obrazu jest obliczany jako średnia arytmetyczna wartości odpowiadających pikseli ze wszystkich klatek, jak przedstawiono w pseudokodzie \ref{lst:average}.
+
+    \begin{lstlisting}[language=Python, caption={Pseudokod metody Średnia}, label={lst:average}]
+for each pixel (x, y):
+    sum = 0
+        for each frame in frames:
+            sum = sum + frame[x, y]
+        output[x, y] = sum / number_of_frames
+    \end{lstlisting}
+    
+    \item \textbf{Mediana}
+
+    Metoda mediany, pokazana w psuedokodzie \ref{lst:median}, opiera się na wybraniu mediany z wartości pikseli w tym samym miejscu dla wszystkich klatek. Dzięki temu skutecznie usuwa anomalie takie jak ślady po satelitach czy pojedyncze piksele zakłóceń.
+
+    \begin{lstlisting}[language=Python, caption={Pseudokod metody Mediana}, label={lst:median}]
+for each pixel (x, y):
+    values = []
+    for each frame in frames:
+        values.append(frame[x, y])
+    sort(values)
+    output[x, y] = median(values)
+    \end{lstlisting}
+    
+    \item \textbf{Kappa-Sigma Clipping}
+
+    Metoda Kappa-Sigma Clipping polega na iteracyjnym odrzucaniu wartości pikseli, które odbiegają od średniej o więcej niż $\kappa$-krotność odchylenia standardowego. Proces ten pozwala na ograniczenie wpływów odchyleń takich jak samoloty oraz satelity kosmiczne zachowując dobry stosunek sygnału do szumu. Pseudokod tej metody przedstawiono w \ref{lst:kappasigma}. 
+
+    \begin{lstlisting}[language=Python, caption={Pseudokod metody Kappa-Sigma Clipping}, label={lst:kappasigma}]
+for each pixel (x, y):
+    values = []
+    for each frame in frames:
+        values.append(frame[x, y])
+
+    for iteration = 1 to max_iterations:
+        mean = average(values)
+        stddev = standard_deviation(values)
+        inliers = []
+        for each v in values:
+            if abs(v - mean) <= kappa * stddev:
+                inliers.append(v)
+        if inliers = values or inliers is empty:
+            break
+        values = inliers
+    \end{lstlisting}
+    
+    \item \textbf{Auto Adaptive Weighted Average}
+
+    Metoda Auto Adaptive Weighted Average jest algorytmem iteracyjnym, która przypisuje każdemu pikselowi wagę zależną od odchylenia od bieżącej średniej. Wagi są wyznaczane za pomocą funkcji adaptacyjnej kontrolowanej parametrami $\alpha$ oraz $\beta$. Metoda pozwala na większa swobodę w implementacji - funkcja adaptacyjna może być zależna nie tylko od wartości pikseli na fotografii ale również od statystycznie obliczonej jakości zdjęcia czy innych wymaganych parametrów. Założenia algorytmu przedstawiono w kodzie \ref{lst:adaptive}.
+
+    \begin{lstlisting}[language=Python, caption={Pseudokod metody Auto Adaptive Weighted Average}, label={lst:adaptive}]
+for each pixel (x, y):
+    values = []
+    for each frame in frames:
+        values.append(frame[x, y])
+    mu = median(values)
+    
+    for iteration = 1 to max_iterations:
+        weights = []
+        for i = 1 to length(values):
+            w = adaptive_weight(values[i], mu, alpha, beta)
+            weights.append(w)
+
+        total_weight = sum(weights)
+        for i = 1 to length(weights):
+            weights[i] /= total_weight
+
+        mu = 0
+        for i = 1 to length(values):
+            mu += weights[i] * values[i]
+
+    output[x, y] = mu
+\end{lstlisting}
+    
+\end{itemize}
