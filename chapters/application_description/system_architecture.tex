@@ -1,1 +1,29 @@
 \section{Architektura systemu}\label{chapter:system_architecture}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.5\linewidth]{images/mainflow.png}
+    \caption{Główne założenia działania programu.}
+    \label{fig:mainflow}
+\end{figure}
+
+Na rysunku \ref{fig:mainflow} przedstawiono główny zarys działania programu. W celu realizacji zadań systemu oraz umożliwienia przyszłego rozwoju zdecydowano się na podział systemu na odpowiednie,
+niezależne od siebie, moduły. System składa się z modułu inicjalizacji, modułu przetwarzania fotografii, modułu rejestracji, modułu kalibracji, modułu nakładania zdjęć, 
+modułu interakcji z plikami i modułu sterującego zawierającego elementy interakcji z użytkownikiem. 
+
+\begin{itemize}
+    \item Moduł inicjalizacji odpowiada za przygotowanie środowiska pracy. Tworzy odpowiednią strukturę katalogów składającą się z odpowiednich podkatalogów na fotografie kalibracyjne, główne zdjęcia light oraz
+katalog na pliki wynikowe. Dzięki implementacji tego modułu użytkownik nie musi ręcznie tworzyć odpowiedniech podkatalogów co ułatwi interakcję z programem oraz zmniejszy ryzyko błędów 
+wynikających z nieporawidłowej organizacji danych.
+    \item Moduł przetwarzania fotografii odpowiada za podstawowe przygotowanie fotografii do dalszych etapów przetwarzania jak wykrywanie gwiazd oraz jest odpowiedzialny za końcową obróbkę 
+    zdjęć po nałożeniu. Do odpowiedniego przygotowania plików przed wykrywaniem gwiazd należy przeprowadzić odpowiednią konwersję z danych surowych na dane z tylko jednym kanałem. Końcowa obróbka danych
+    zakłada przetwarzanie zdjęć pod względem ustalenia odpowiedniego balansu bieli oraz normalizację jasności zdjęcia wynikowego.
+    \item Moduł rejestracji odpowiada za lokalizację gwiazd na fotografiach oraz obliczenie odpowiedniej transformacji w celu nałożenia zdjęć. Do wykrywanie gwiazd wykorzystywana jest funkcja udostępniona
+    przez bibliotekę OpenCV, która pozwala na wykrycie i ustalenie centroidów odpowiednich obiektów nazywanych jako \textit{blob}. Odpowiednie parametry pozwalające wykrywanie
+    gwiazd zostały opisane w rozdziale \ref{chapter:code_structure}. Ustalenie transformacji będzie możliwe dzięki oszacowaniu transformacji afinicznej na podstawie dopasowanych punktów.
+    \item Moduł kalibracji jest odpowiedzialny za przygotowanie i nakładanie zdjęć kalibracyjnych. Zdjęcia kalibracyjne obsługiwane przez program to bias, dark oraz flat.
+    \item Moduł nakładania zdjęć odpowiada za łączenie przygotowanych fotografii w jeden obraz końcowy. Moduł będzie obsługiwał metody łączenia zdjęć: średnia, mediana, Kappa-Sigma Clipping oraz Auto Adaptive
+Weighted Average.
+    \item Moduł sterujący odpowiada za zarządzanie przepływem danych pomiędzy poszczególnymi modułami oraz interakcję z użytkownikiem.
+    \item Moduł interakcji z plikami odpowiada za odczyt plików RAW przygotowanych prez użytkownika, odczytywanie z dysku odpowiednich plików przejściowych kalibracyjnych oraz zapisywanie plików wynikowych.
+\end{itemize}
