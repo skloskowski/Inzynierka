@@ -1,1 +1,35 @@
-\section{Porównanie wyników}
+\section{Analiza wyników}\label{chapter:result_comparison}
+
+W niniejszym rozdziale dokonano analizy wyników eksperymentów zebranych w rozdziale \ref{chapter:results}. Skupiono się na dwóch głównych aspektach: czasie wykonania poszczególnych metod
+nakładania zdjęć oraz jakości obrazu mierzonej za pomocą FWHM. Określenie czy przedstawione dane można interpretować za liniowe bądź wykładnicze określono korzystając z programu Microsoft Excel
+na podstawie funkcji dopasowania krzywej trendu do danych eksperymentalnych. Określenie dopasowania krzywej trendu do danych eksperymentalnych dokonano na podstawie współczynnika determinacji $R^2$
+- linia trendu z najwyższą wartością współczynnika była uznawana za najlepszą reprezentację krzywej do danych.
+
+Analiza wyników eksperymentów dla zestawu 244 zawartych w tabeli \ref{tab:zestaw244_time_table} oraz na wykresie \ref{fig:zestaw244_time_chart} pokazuje wyraźne różnice w czasie wykonania pomiędzy
+metodami prostymi: średnia oraz mediana, a metodami złożonymi: Kappa-Sigma Clipping oraz Auto Adaptive Weighted Average. Wyznaczona krzywa wskazuje na to, że do 30 zdjęć wszystkie z badanych algorytmów
+mają liniowy czas wykonania. Wzrost całkowitego czasu integracji powoduje większy wzrost czasu działania programu dla algorytmu Auto Adaptive Weighted Average w porównaniu do Kappa-Sigma Clipping, który wynosi od 
+około 15\% różnicy dla pięciu łączonych zdjęć (oznaczonych jako całkowity czas integracji równy 10 minut) do prawie 18\% różnicy dla trzydziestu łączonych zdjęć. Różnice w czasie działania programu
+pomiędzy algorytmami średniej i mediany są znacznie większe wynosząc od 8\% dla pięciu łączonych zdjęć do ponad 20\% dla trzydziestu łączonych zdjęć. Największą odpornością na wzrost czasu działania programu
+względem całkowitego czasu integracji charakteryzuje się algorytm Auto Adaptive Weighted Average, którego czas działania programu wzrósł o 573\% pomiędzy pięcioma a trzydziestoma łączonymi zdjęciami, 
+najmniejszą odporność wykazuje algorytm mediany, którego czas działania wzrósł o ponad 706\% w tym samym zakresie.
+
+Analiza wyników eksperymentów dla zestawu 1499 zawartych w tabeli \ref{tab:zestaw1499_time_table} oraz na wykresie \ref{fig:zestaw1499_time_chart} pokazuje na nagły wzrost czasu działania programu
+powyżej sześćdziesięciu łączonych zdjęć dla wszystkich badanych algorytmów. Największym wzrostem czasu działania programu od pięćdziesięciu do sześćdziesięciu łączonych zdjęć charakteryzują się algorytmy 
+Kappa-Sigma Clipping oraz mediany, dla których średni czas działania programu wzrósł o odpowiednio 48\% oraz 56\%. Najmniejszym wzrostem czasu działania w tym zakresie charakteryzuje się algorytm 
+Auto Adaptive Weighted Average, którego średni czas działania programu wzrósł o 28\%. Algorytm mediany wykazuje najmniejszą odporność na wzrost czasu działania najprawdopodobniej ze względu na
+konieczność sortowania wartości pikseli dla każdego piksela w obrazie wejściowym. W celu zmniejszenia czasu działania programu dla tego algorytmu można zastosować algorytmu umożliwjące na znalezienie miediany
+w czasie liniowym. Dla metody Kappa-Sigma Clipping nie zastosowano optymalizacji pamięciowych tak jak w algorytmie Auto Adaptive Weighted Average, co może być powodem nagłego wzrostu czasu działania.
+W celu dostarczenia dokładniejszej analizy czasów działania należy wykonać badania zużycia pamięci przez poszczególne algorytmy oraz badania dla większej ilości danych.
+
+Analiza eksperymentów zależności FWHM dla całkowitego czasu integracji bazowana na wynikach przedstawionych na wykresach \ref{fig:zestaw244_fwhm_11} - \ref{fig:zestaw1499_fwhm_19} oraz w tabelach
+\ref{tab:zestaw_244_fwhm_table} oraz \ref{tab:zestaw_1499_fwhm_table}, rozmiaru okna pomiarowego oraz metody nakładania zdjęć dla obu badanych zestawów danych nie wykazała jednoznacznie przewagi żadnej
+z metod nakładania zdjęć na ostrość obrazu wynikowego dla wszystkich badanych rozmiarów okna. Drobne różnice są obserwowane lokalnie - algorytm Kappa-Sigma Clipping reprezentauje najniższe wartości FWHM
+dla największych czasów integracji dla wszystkich okien pomiarowych w zestawie 244 oraz dla okna 11 pikseli w zestawie 1499, wielkość tych różnic jest jednak niewielka. Algorytm średniej dla więkoszści
+badanych przypadków charakteryzuje się najwyższymi wartościami FWHM. Wynika to prawdopodobnie z braku eliminacji wartości odstających, które mogą powodować rozmnycie obrazu końcowego.
+Brak idealnego dopasowania transformacji afinicznej pomiędzy poszczególnymi zdjęciami w zestawie może również powodować rozmycie obrazu końcowego, w celu dokładniejszej weryfikacji wyników tego zjawiska
+należy zbadań wpływ dokładności dopasowania transformacji na wartość FWHM obrazów wynikowych - obecnie stosowana tolerancja jednego piksela może mieć znaczący wpływ na końcowe wartości FWHM zważając na fakt,
+że różnice pomiędzy algorytmami w badanych przypadkach są o rząd wielkości mniejsze. 
+Dla najmniejszego okna pomiarowego wartości FWHM mają tendecję do niewielkiego wzrostu wraz ze wzrostem całkowitego czasu integracji, natomiast dla okien 15 i 19 pikseli zależność jest mniej spójna
+i niemożliwe jest wyciągnięcie jednoznacznych wniosków. Zależności opisane powyżej sugerują, że przyrost SNR związany z dłuższym czasem integracji nie przekłada się bezpośrednio na istotne
+zmniejszenie FWHM. W celu dokładniejszej analizy wyników FWHM należy przeprowadzić dodatkowe badania zależności FWHM danych wejściowcych zmiany wartości FWHM obrazów wynikowych. Zmienne wartości widzenia,
+temperatury i ostrości zdjęć w ciągu nocy obserwacyjnej mogą mieć wpływ na ostateczne wartości FWHM obrazów wynikowych - te zmiany mogą mieć różny wpływ w zależności od badanego algorytmu. 

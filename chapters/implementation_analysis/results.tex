@@ -1,11 +1,27 @@
-\section{Wyniki eksperymentów}
+\section{Wyniki eksperymentów}\label{chapter:results}
 
-Czas działania zestawów 244
+W tym rozdziale przedstawiono wyniki badań czasu działania programu w zależności od zastosowanej metody nakładania zdjęc oraz całkowitego czasu integracji zdjęć. 
+Do interpretacji wyników należy pamiętać, że całkowity czas integracji nie jest porównywalny pomiędzy zestawami, ponieważ zestawy zdjęć wykorzysywały fotografie o różnym czasie naświetlania pojedynczego zdjęcia.
+Zestaw 1499 wykorzystywał zdjęcia o czasie naświetlania 60 sekund w porównaniu do zestawu 244, który wykorzystywał zdjęcia o czasie naświetlania 120 sekund. Dodatkowy wpływ na wyniki czasu działania
+Dodatkowy wpływ na wyniki czasu działania ma również wykorzystanie klatek kalibracyjnych do korekcji zdjęć przed nałożeniem w zestawie 1499. Badany został całkowity czas działania programu, który
+obejmował czas wczytania zdjęć, wykonania kalibracji, rejestracji oraz nałożenia zdjęć. Do czasu działania programu nie wliczano jednak czasu potrzebnego na generację klatek kalibracyjnych.
+
+Poniżej przedstawiono wyniki eksperymentów dla czasu działania programu dla zestawów 244 oraz 1499. Czas działania programu mierzono dla czterech metod nakładania zdjęć: średnia, mediana, Kappa-Sigma 
+Clipping oraz Auto Adaptive Weighted Average. Wskazano różnice w czasie działania programu w zależności od całkowitego czasu integracji zdjęć. 
+Dla każdej kombinacji czasu integracji oraz badanego algorytmu wykonano pięć iteracji programu obliczono następnie średni czas działania oraz błąd. Jako błąd pomiaru przyjęto jedno odchylenie standardowe. 
+Przed obliczeniem ostatecznych wyników zdecydowano się na inwalidację błędów grubych, które zdefiniowano na czasy odbiegające znacznie od średniego czasu działania dla badanej kombinacji.
+Jedyny taki błąd gruby zaobserwowano dla pojedynczego badania kombinacji zestawu 244 metodą Auto Adaptive Weighted Average przy czasie integracji 60 minut. Czas błędu grubego odstawał o ponad 50\% od średniej
+wartości czasu działania dla tej kombinacji - po inwalidacji tego błędu grubego odchylenie standardowe pomiarów wyniosło poniżej 1 sekundy.
+Na wykresach \ref{fig:zestaw244_time_chart} oraz \ref{fig:zestaw1499_time_chart} przedstawiono graficzne porównanie średnich czasów działannia programu w zależności do zastosowanej metody nakładania zdjęć 
+oraz całkowitego czasu integracji odpowiednio dla zestawu 244 oraz zestawu 1499. Dokładne wartości średnich oraz błędów przedstawiono odpowiednio w tabelach \ref{tab:zestaw244_time_table} 
+oraz \ref{tab:zestaw1499_time_table} dla zestawu 244 oraz zestawu 1499.
+
+\newpage
 
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.8\linewidth]{images/zestaw244_time_chart.png}
-    \caption{Porównanie średnich czasów nakładania zdjęć w zależności od metody nakładania zdjęć i czasu integracji dla zestawów 244}
+    \caption{Porównanie na wykresie średnich czasów nakładania zdjęć w zależności od metody nakładania zdjęć i czasu integracji dla zestawów 244}
     \label{fig:zestaw244_time_chart}
 \end{figure}
 
@@ -34,16 +50,16 @@ Metoda &  & \multicolumn{6}{c}{Czas integracji [min]} \\
  & $\sigma$ [s]       & 0.09  & 1.34   & 0.22   & 0.89   & 0.61   & 0.92   \\
 \bottomrule
 \end{tabular}
-\caption{Porównanie średnich czasów nakładania zdjęć w zależności od metody nakładania zdjęć i czasu integracji dla zestawów 244.}\
+\caption{Porównanie w tabeli średnich czasów nakładania zdjęć w zależności od metody nakładania zdjęć i czasu integracji dla zestawów 244.}\
 \label{tab:zestaw244_time_table}
 \end{table}
 
-Czas działania zestawów 1499
+\newpage
 
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.8\linewidth]{images/zestaw1499_time_chart.png}
-    \caption{Porównanie średnich czasów nakładania zdjęć w zależności od metody nakładania zdjęć i czasu integracji dla zestawów 1499}
+    \caption{Porównanie na wykresie średnich czasów nakładania zdjęć w zależności od metody nakładania zdjęć i czasu integracji dla zestawów 1499}
     \label{fig:zestaw1499_time_chart}
 \end{figure}
 
@@ -72,11 +88,21 @@ Metoda &  & \multicolumn{6}{c}{Czas integracji [min]} \\
  & $\sigma$ [s]       & 0.38   & 0.77   & 2.96   & 0.84   & 2.29   & 43.84  \\
 \bottomrule
 \end{tabular}
-\caption{Porównanie średnich czasów nakładania zdjęć w zależności od metody nakładania zdjęć i czasu integracji dla zestawów 1499.}
+\caption{Porównanie w tabeli średnich czasów nakładania zdjęć w zależności od metody nakładania zdjęć i czasu integracji dla zestawów 1499.}
 \label{tab:zestaw1499_time_table}
 \end{table}
 
-FWHM dla zestawów 244
+\newpage
+
+Poniżej przedstawiono wyniki eksperymentów dla FWHM zdjęć wynikowych dla zestawów 244 oraz 1499. FWHM zdjęć wynikowych mierzono dla czterech metod nakładania zdjęć: średnia, mediana, Kappa-Sigma 
+Clipping oraz Auto Adaptive Weighted Average. Wskazano różnice w FWHM zdjęć w zależności od całkowitego czasu integracji zdjęć. Wyniki obliczenia FWHM są stałe dla pojedynczego zdjęcia i zależą tylko od
+określonego okna pomiarowego oraz obliczonego centrum gwiazdy. Zdecydowano się więc na przedstawienie wyników FWHM jako pojedycznego pomiaru. Algorytm wykrywania gwiazd nie jest w pełni skuteczny, dlatego
+zdecydowano się na jednokrotne ustalenie pozycji gwiazd oraz ich centrum dla podstawie zdjęcia referencyjnego, którym było zdjęcie wynikowe uzyskane metodą Auto Adaptive Weighted Average przy 
+maksymalnym badanym czasie integracji. Badanie FWHM przeprowadzone w ten sposób ma jednak możliwość wprowadzenia błędów spowodowanych innym położeniem centrum gwiazdy na zdjęciach wynikowych uzyskanych 
+przez różne algorytmy oraz różne czasy integracji. Podany sposób badań jest jednak niezbędny do eliminacji wpływu detekcji gwiazd na wyniki FWHM. Wyniki FWHM przedstawiono dla trzech różnych rozmiarów okna
+pomiarowego: 11, 15 oraz 19 pikseli. Na wykresach \ref{fig:zestaw244_fwhm_11}, \ref{fig:zestaw244_fwhm_15} oraz \ref{fig:zestaw244_fwhm_19} przedstawiono graficzne porównanie wartości FWHM w zależności 
+do zastosowanej metody nakładania zdjęć oraz całkowitego czasu integracji odpowiednio dla zestawu 244. Wyniki dla zestawu 1499 przedstawiono na wykresach \ref{fig:zestaw1499_fwhm_11}, \ref{fig:zestaw1499_fwhm_15}
+ oraz \ref{fig:zestaw1499_fwhm_19}. Dokładne wartości wyników FWHM znajdują się odpowiednio w tabelach \ref{tab:zestaw_244_fwhm_table} oraz \ref{tab:zestaw_1499_fwhm_table} dla zestawu 244 oraz zestawu 1499.
 
 \begin{figure}[!ht]
     \centering
@@ -91,6 +117,8 @@ FWHM dla zestawów 244
     \caption{Porównanie FWHM zestawów 244 w zależności od metody nakładania zdjęć i czasu integracji dla okna 15 pikseli.}
     \label{fig:zestaw244_fwhm_15}
 \end{figure}
+
+\newpage
 
 \begin{figure}[!ht]
     \centering
@@ -132,8 +160,7 @@ Metoda &  & \multicolumn{6}{c}{Czas integracji [min]} \\
 \label{tab:zestaw_244_fwhm_table}
 \end{table}
 
-
-FWHM dla zestawów 1499
+\newpage
 
 \begin{figure}[!ht]
     \centering
@@ -148,6 +175,8 @@ FWHM dla zestawów 1499
     \caption{Porównanie FWHM zestawów 1499 w zależności od metody nakładania zdjęć i czasu integracji dla okna 15 pikseli.}
     \label{fig:zestaw1499_fwhm_15}
 \end{figure}
+
+\newpage
 
 \begin{figure}[!ht]
     \centering
@@ -189,25 +218,40 @@ Metoda &  & \multicolumn{6}{c}{Czas integracji [min]} \\
 \label{tab:zestaw_1499_fwhm_table}
 \end{table}
 
-porównanie wizualne zestawów 60 244
+\newpage
+
+Poniżej przedstawino wizualne porównanie tych samych wycinków zdjęć wynikowych przedstawiających ten sam obiekt dla różnych algorytmów nakładania zdjęć. Każde ze zdjęć wynikowych zostało uzyskane poprzez
+nałożenie zdjęć z całkowitym czasem integracji 60 minut. Do wykonania zdjęć wynikowych obiektu 244 nie użyto klatek kalibracyjnych, natomiast do wykonania zdjęć wynikowych obiektu 1499
+użyto klatki kalibracyjne. Każda z fotografii wynikowych została zmodyfikowano w ten sam sposób w celu poprawy widoczności szczegółów na zdjęciach - zastosowano krzywe oraz zwiększono nasycenie kolorów.
+Do edycji zdjęć użyto darmowy program GNU Image Manipulation Program (GIMP) możliwy do pobrania z oficjalnej strony producenta \cite{gimp}.
+Dla zestawu 244 obiektem fotografowanym był obiekt NGC 244 - galaktyka spiralna w gwiazdozbiorze Andromedy znana jako galaktyka Andromedy. 
+Porównanie wizualne zdjęć zestawu 244 przedstawiono na rysunku \ref{fig:zestaw244_60_comp}.
+Dla zestawu 1499 obiektem fotografowanym był obiekt NGC 1499 - mgławica emisyjna w gwiazdozbiorze Perseusza znana jako mgławica Kalifornia. 
+Porównanie wizualne zdjęć zestawu 1499 przedstawiono na rysunku \ref{fig:zestaw1499_60_comp}.
+Ze względu na różne warunki obserwacyjne, jasność nieba w zenicie oraz różny czas naświetlania pojedynczego zdjęcia, fotografie wynikowe nie powinny zostać porównywane pomiędzy zestawami.
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\linewidth]{images/zestaw244_60_comp.png}
+    \includegraphics[width=0.55\linewidth]{images/zestaw244_60_comp.png}
     \caption{Porównanie wizualne obiektu z zestawu 244 o całkowitym czasie integracji 60 min. dla różnych algorytmów.}
     \label{fig:zestaw244_60_comp}
 \end{figure}
 
-porównanie wizualne zestawów 60 1499
-
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\linewidth]{images/zestaw1499_60_comp.png}
+    \includegraphics[width=0.55\linewidth]{images/zestaw1499_60_comp.png}
     \caption{Porównanie wizualne obiektu z zestawu 1499 o całkowitym czasie integracji 60 min. dla różnych algorytmów.}
     \label{fig:zestaw1499_60_comp}
 \end{figure}
 
-porównanie zestawów 10-60 dla 244
+\newpage
+\clearpage
+
+Poniżej przedstawiono wizualne porównanie tych samych wycinków zdjęć wynikowych dla różnych czasów integracji zdjęć. Obrazy wynikowe zostały wykonane korzystając z algorytmu Kappa-Sigma Clipping.
+Każde ze zdjęć wynikowych zostało uzyskane poprzez nałożenie zdjęć z różnym całkowitym czasem integracji opisanym na rysunku.  Każda z fotografii wynikowych została zmodyfikowano w ten sam sposób
+w celu poprawy widoczności szczegółów na zdjęciach - zastosowano krzywe oraz zwiększono nasycenie kolorów. Do wykonania zdjęć wynikowych obiektu 244 nie użyto klatek kalibracyjnych,
+natomiast do wykonania zdjęć wynikowych obiektu 1499 użyto klatki kalibracyjne. Ze względu na różne warunki obserwacyjne, jasność nieba w zenicie oraz różny czas naświetlania pojedynczego zdjęcia,
+fotografie wynikowe nie powinny zostać porównywane pomiędzy zestawami.
 
 \begin{figure}[!ht]
     \centering
@@ -216,7 +260,7 @@ porównanie zestawów 10-60 dla 244
     \label{fig:zestaw244_noise_kappa_comp}
 \end{figure}
 
-porównanie zestawów 10-60 dla 1499
+\newpage
 
 \begin{figure}[!ht]
     \centering
@@ -224,3 +268,7 @@ porównanie zestawów 10-60 dla 1499
     \caption{Porównanie wizualne szumu dla różnego czasu integracji algorytmu Kappa-Sigma Clipping zestawów 1499.}
     \label{fig:zestaw1499_noise_kappa_comp}
 \end{figure}
+
+\newpage
+
+\clearpage
