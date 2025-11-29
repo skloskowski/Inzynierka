@@ -32,4 +32,15 @@ należy zbadań wpływ dokładności dopasowania transformacji na wartość FWHM
 Dla najmniejszego okna pomiarowego wartości FWHM mają tendecję do niewielkiego wzrostu wraz ze wzrostem całkowitego czasu integracji, natomiast dla okien 15 i 19 pikseli zależność jest mniej spójna
 i niemożliwe jest wyciągnięcie jednoznacznych wniosków. Zależności opisane powyżej sugerują, że przyrost SNR związany z dłuższym czasem integracji nie przekłada się bezpośrednio na istotne
 zmniejszenie FWHM. W celu dokładniejszej analizy wyników FWHM należy przeprowadzić dodatkowe badania zależności FWHM danych wejściowcych zmiany wartości FWHM obrazów wynikowych. Zmienne wartości widzenia,
-temperatury i ostrości zdjęć w ciągu nocy obserwacyjnej mogą mieć wpływ na ostateczne wartości FWHM obrazów wynikowych - te zmiany mogą mieć różny wpływ w zależności od badanego algorytmu. 
+temperatury i ostrości zdjęć w ciągu nocy obserwacyjnej mogą mieć wpływ na ostateczne wartości FWHM obrazów wynikowych - te zmiany mogą mieć różny wpływ w zależności od badanego algorytmu.
+
+Porównania wizualne edytowanych plików wynikowych przedstawionych na rysunkach \ref{fig:zestaw244_60_comp} oraz \ref{fig:zestaw1499_60_comp} pozwalają na subiektywną ocenę jakości obrazu 
+uzyskanego różnymi algorytmami pod względem poziomu szumu oraz zachowania ostrości szczegołów. Algorytmy Kappa-Sigma Clipping oraz Auto Adaptive Weighted Average wykazują nieznaczną przewagę 
+w poziomie tła widoczną głównie w obszarach pozbawionych gwiazd oraz w zachowaniu struktur o niskim kontraście - różnice są jednak subtelne. 
+Na porównaniach wizualnych zawartych na rysunkach \ref{fig:zestaw244_noise_kappa_comp} oraz \ref{fig:zestaw1499_noise_kappa_comp} skupiono się na ocenie wpływu całkowitego czasu integracji dla wybranego algorytmu.
+Ze względu na wyniki wizualne oraz FWHM zdecydowano się na wykorzystanie algorytmu Kappa-Sigma Clipping jako przykład - tendencje spadkowe pozostają jednak podobne dla wszystkich algorytmów. 
+Porównania te pokazują spadek poziomu szumu wraz ze wzrostem całkowitego czasu integracji zgodnie z oczekiwaniami. Efekt jest bardziej widoczny w zestawie 1499 - jest to możliwe ze względu na 
+zastosowaną kalibrację zdjęć wejściowych w przeciwieństwie do zestawu 244, gdzie nie wykorzytano zdjęć kalibracyjnych. Alternatywnie, większy spadek w zesatwi 1499 można tłumaczyć wyższym 
+poziomem zanieczyszeia świetlnego. W takich warunkach wydłużenie czasu integracji wykazuje wyraźniejszą poprawę stosunku sygnału do szumu, ponieważ SNR wzrasta wraz z pierwiastkiem czasu.
+W celu obiektywnej oceny jakości obrazu należy przeprowadzić analizę algorytymiczną poziomu sygnału do szumu. Podczas tej pracy nie udało się przeprowadzić analizy SNR ze względu na wymagany czas 
+opracowania odpowiednich narzędzi do pomiaru SNR w obrazach astronomicznych.
