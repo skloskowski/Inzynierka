@@ -1,22 +1,28 @@
 \section{Kalibracja}
 
-Jednym z niezbędnych elementów przetwarzania zdjęć obiektów głębokiego nieba jest zastosowanie klatek kalibracyjnych. Istnieje kilka rodzajów klatek kalibracyjnych, które odpowiadają za korekcję różnych niedoskonałości teleskopu i matrycy. Poniżej opisano najczęściej używane klatki kalibracyjne. Dokładny opis założeń korzystania z klatek kalibracyjnych opisano w książce \cite{Howell2006}. Dotyczy ona głównie astrofotografii na aparatach CCD, lecz podstawowe założenia pozostają niezmienne dla nowocześniejszych matryc CMOS. 
+Jednym z niezbędnych elementów przetwarzania zdjęć jest zastosowanie klatek kalibracyjnych, które odpowiadają za korekcję różnych niedoskonałości teleskopu i matrycy. 
+Poniżej opisano najczęściej używane klatki kalibracyjne. Dokładny opis założeń korzystania z nich opisano w książce \cite{Howell2006}. Dotyczy ona głównie astrofotografii na aparatach CCD, lecz podstawowe założenia pozostają 
+niezmienne dla nowocześniejszych matryc CMOS. 
 
 \begin{itemize}
     \item \textbf{Klatki Bias}
 
-    Klatki bias, nazywane też klatkami offset, wykonywane są przy całkowicie zakrytej matrycy i czasie ekspozycji możliwie najkrótszym dla wykorzystywanej matrycy. Należy pamiętać o potrzebie wykonania tych samych klatek dla tych samych ustawień ISO lub Gain (w zależności od zastosowanego rodzaju aparatu) jak główne fotografie obiektu. Stosuje się je w celu usunięcia stałego szumu generowanego przez elektronikę w trakcie odczytu informacji z matrycy. Klatki bias stanowią minimalny poziom szumu zawartego w każdej wykonanej fotografii.
+    Klatki bias, nazywane też klatkami offset, wykonywane są przy całkowicie zakrytej matrycy i czasie ekspozycji możliwie najkrótszym dla wykorzystywanej matrycy. Należy pamiętać o potrzebie wykonania tych klatek dla tych samych ustawień ISO 
+    lub Gain (w zależności od zastosowanego rodzaju aparatu) jak główne fotografie obiektu. Stosuje się je w celu usunięcia stałego szumu generowanego przez elektronikę w trakcie odczytu informacji z matrycy. Klatki bias stanowią minimalny poziom 
+    szumu zawartego w każdej wykonanej fotografii.
     
     \item \textbf{Klatki Dark}
 
-    Klatki dark wykonuje się przy zakrytej matrycy, w tej samej temperaturze, takim samym czasem ekspozycji i ustawieniami ISO/Gain jak klatki obiektu. Ich głównym zadaniem jest pozbycie się prądu ciemnego (\textit{ang. dark current}), redukcja zjawiska ,,amp glow'', pozbycie się gorących pikseli i wpływu promieniowania kosmicznego.
+    Klatki dark wykonuje się przy zakrytej matrycy, w tej samej temperaturze, takim samym czasem ekspozycji i ustawieniami ISO/Gain jak klatki obiektu. Ich głównym zadaniem jest pozbycie się prądu ciemnego (\textit{ang. dark current}), 
+    redukcja zjawiska ,,amp glow'', pozbycie się gorących pikseli i wpływu promieniowania kosmicznego.
     
     \item \textbf{Klatki Flat}
 
-    Klatki flat służą do usunięcia nierównomiernego oświetlenia matrycy (zjawisko winiety) i różnic czułości poszczególnych pikseli. Klatki flat przydają się dodatkowo przy usunięciu artefaktów spowodowanych zanieczyszczeniami na matrycy oraz teleskopie. Wykonywane są przy równomiernym oświetleniu całego pola widzenia - kierując teleskop lub obiektyw na jasne jednolite tło. Podczas kalibracji warto zwrócić uwagę na potrzebę odjęcia bias, przed użyciem klatek flat na głównych fotografiach obiektu. 
+    Klatki flat służą do usunięcia nierównomiernego oświetlenia matrycy (zjawisko winiety) i różnic czułości poszczególnych pikseli. Klatki flat przydają się dodatkowo przy zniwelowaniu artefaktów spowodowanych zanieczyszczeniami na matrycy oraz teleskopie. 
+    Wykonywane są przy równomiernym oświetleniu całego pola widzenia - kierując teleskop lub obiektyw na jasne jednolite tło. Podczas kalibracji warto zwrócić uwagę na potrzebę odjęcia bias przed użyciem klatek flat na głównych fotografiach obiektu. 
 \end{itemize}
 
-    W celu osiągnięcia wymaganych efektów wykonuje się wiele klatek kalibracyjnych każdego rodzaju a następnie przetwarza się je obliczając średnią wartość na każdym pikselu. Ostateczny teoretyczny opis nałożenia klatek można opisać tak jak w równaniu \eqref{eq:calibration}
+    W celu osiągnięcia wymaganych efektów wykonuje się wiele klatek kalibracyjnych każdego rodzaju, a następnie przetwarza się je obliczając średnią wartość na każdym pikselu. Ostateczny teoretyczny opis nałożenia klatek można opisać tak jak w równaniu \eqref{eq:calibration}
 
 \begin{equation}\label{eq:calibration}
     I_{\text{calibrated}} = \frac{I_{\text{light}} - I_{\text{dark}}}{I_{\text{flat}} - I_{\text{bias}}}
@@ -26,9 +32,9 @@ gdzie: \\
 
 \begin{tabular}{l}
 
-    \( I_{\text{light}} \) – surowa klatka obiektu \\
-    \( I_{\text{dark}} \) – klatka dark \\
-    \( I_{\text{bias}} \) – klatka bias \\
-    \( I_{\text{flat}} \) – klatka flat
+    \( I_{\text{light}} \) - surowa klatka obiektu \\
+    \( I_{\text{dark}} \) - klatka dark \\
+    \( I_{\text{bias}} \) - klatka bias \\
+    \( I_{\text{flat}} \) - klatka flat
 
 \end{tabular}

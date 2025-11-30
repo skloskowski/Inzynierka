@@ -1,8 +1,10 @@
 \chapter{Przetwarzanie zdjęć}\label{chapter:image_processing}
 
-W celu wytworzenia obrazu lepszej jakości oraz z niskim poziomem szumu fotografie obiektów głębokiego należy odpowiednio przetworzyć. Przetwarzanie zdjęć można podzielić na trzy główne etapy: kalibrację, rejestrację oraz stacking.
+W celu wytworzenia obrazu lepszej jakości, z niskim poziomem szumu, fotografie obiektów głębokiego nieba należy odpowiednio przetworzyć. Można podzielić to na trzy główne etapy: kalibrację, rejestrację oraz stacking.
 
-Prawidłowe opisanie i porównanie źródeł szumu na różnych urządzeniach oraz przy różnych warunkach wymaga ustalenia odpowiedniej jednostki. Każdy foton światła padający na piksel detektora w zależności od długości światła powoduje pewną szansę na wygenerowanie elektronu - prawdopodobieństwo uwolnienia się takiego elektronu nazywa się wydajnością kwantową (\textit{ang. Quantum Efficiency}). Standardowo ilość szumu na zdjęciu producenci określają za pomocą ilości elektronów wygenerowanych przy pobieraniu informacji z matrycy fotograficznej \cite{Howell2006}. Przydatne informacje dotyczące szumu generowanego na popularnych matrycach aparatów można znaleźć na stronie Photons to Photos \cite{photonstophotos}.
+Prawidłowe opisanie i porównanie źródeł szumu na różnych urządzeniach oraz przy różnych warunkach wymaga ustalenia odpowiedniej jednostki. Każdy foton światła padający na piksel detektora, w zależności od długości światła, powoduje pewną szansę na 
+wygenerowanie elektronu. Prawdopodobieństwo uwolnienia się takiego elektronu nazywa się wydajnością kwantową (\textit{ang. Quantum Efficiency}). Standardową wartością określającą szum jest ilość elektronów wygenerowanych przy 
+pobieraniu informacji z matrycy fotograficznej \cite{Howell2006}. Przydatne informacje dotyczące szumu generowanego na popularnych matrycach aparatów można znaleźć na stronie Photons to Photos \cite{photonstophotos}.
 
 \input{chapters/image_processing/calibration}
 \input{chapters/image_processing/registration}

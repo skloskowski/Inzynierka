@@ -1,12 +1,16 @@
 \section{Rejestracja}
 
-Rejestracja jest procesem przetwarzania zdjęć głębokiego nieba, która polega na odpowiedniej transformacji fotografii przed nakładaniem zdjęć tak żeby przedstawiały one ten sam fragment nieba, niezależnie od przesunięć spowodowanych różnymi czynnikami mechanicznymi. Proces rejestracji można podzielić na dwa etapy. 
+Rejestracja jest procesem przetwarzania zdjęć głębokiego nieba, która polega na odpowiedniej transformacji fotografii przed nakładaniem zdjęć tak, żeby przedstawiały one ten sam fragment nieba, niezależnie od przesunięć spowodowanych różnymi czynnikami 
+mechanicznymi. Proces rejestracji można podzielić na dwa etapy. 
 
-Pierwszym z nich będzie identyfikacja elementów, które pozostają niezmienne na obu fotografiach. Dla astrofotografii elementy te są proste do określenia i są to zazwyczaj gwiazdy widoczne w tle fotografowanego obiektu głębokiego nieba. Do wykrywania tych punktów można wykorzystać algorytmy bazujące na właściwościach lokalnych obiektów. Algorytmy te wykrywają punkty o jednolitej jasności różniące się od otoczenia poprzez analizę jasności, kształtu i rozmiaru obiektów. Oblicza się następnie punkt centralny wykrytych obiektów, żeby można było je stosować jako punkty odniesienia w następnym etapie.
+Pierwszym z nich będzie identyfikacja elementów, które pozostają niezmienne na obu fotografiach. Dla astrofotografii elementy te są proste do określenia i są to zazwyczaj gwiazdy widoczne w tle fotografowanego obiektu głębokiego nieba. Do wykrywania tych punktów 
+można wykorzystać algorytmy, bazujące na lokalnych właściwościach obiektów. Algorytmy te wykrywają punkty o jednolitej jasności, różniące się od otoczenia poprzez analizę jasności, kształtu i rozmiaru obiektów. Oblicza się następnie punkt centralny 
+wykrytych obiektów, żeby można było je stosować jako punkty odniesienia.
 
 Następnym etapem będzie określenie jaką transformację trzeba dokonać, żeby surową klatkę nałożyć prawidłowo na fotografię referencyjną. 
-Jednym z algorytmicznych sposobów rozwiązania tego problemu będzie określenie stosunków długości boków dla wszystkich zestawów trzech gwiazd znajdujących się na obu zdjęciach. 
-Należy wtedy znaleźć najbliżej pasujące stosunki trójkątów pomiędzy zdjęciem referencyjnym a surową klatką oraz oszacowanie macierzy transformacji pomiędzy zdjęciami. 
+Jednym z algorytmicznych sposobów rozwiązania tego problemu będzie określenie stosunków długości boków dla wszystkich zestawów trzech gwiazd, znajdujących się na obu zdjęciach. 
+Należy wtedy znaleźć najbliżej pasujące stosunki trójkątów pomiędzy zdjęciem referencyjnym, a surową klatką i oszacowanie macierzy transformacji pomiędzy zdjęciami. 
 Jest to metoda uproszczona, inspirowana na bardziej zaawansowanych rozwiązaniach zaproponowanych przez Lin i Xu w artykule \cite{rs15071921}.
 
-Alternatywą dla tego podejścia jest astrometryczne rozwiązywanie obrazu (ang. \textit{Plate Solving}), polegające na dopasowaniu układu gwiazd z obrazu do katalogów gwiezdnych w celu uzyskania dokładnych parametrów orientacji, skali oraz położenia pola widzenia obrazu względem nocnego nieba \cite{doi:10.2514/6.2025-99706}.
+Alternatywą dla tego podejścia jest astrometryczne rozwiązywanie obrazu (ang. \textit{Plate Solving}), polegające na dopasowaniu układu gwiazd z obrazu do katalogów gwiezdnych, w celu uzyskania dokładnych parametrów orientacji, skali oraz 
+położenia pola widzenia obrazu, względem nocnego nieba \cite{doi:10.2514/6.2025-99706}.

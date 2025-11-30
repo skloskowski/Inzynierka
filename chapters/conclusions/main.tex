@@ -2,25 +2,25 @@
 
 W pracy zrealizowano implementację narzędzia do nakładania zdjęć obiektów głębokiego nieba z wykorzystaniem czterech zaimplementowanych algorytmów: średniej, mediany, Kappa-Sigma Clipping
 oraz Auto Adaptive Weighted Average z uwzględnieniem przesunięć pomiędzy zdjęciami oraz wykorzystaniem zdjęć kalibracyjnych. Dokonano analizy porównawczej czasów działania programu w zależności od
-wybranego algorytmu i wykorzystywanych zestawów danych oraz jakości uzyskanego obrazu mierzonej za pomocą szerokości połówkowej gwiazd. Przeprowadzone badania wykazały, że system prawidłowo realizuje
+wybranego algorytmu i wykorzystywanych zestawów danych, oraz jakości uzyskanego obrazu mierzonej za pomocą szerokości połówkowej gwiazd. Przeprowadzone badania wykazały, że system prawidłowo realizuje
 zadanie wykonywania obrazów wynikowych. 
 
 Metody proste - średnia oraz mediana - charakteryzują się krótszym czasem działania programu w porównaniu do metod złożonych - Kappa-Sigma Clipping oraz Auto Adaptive Weighted Average, zwłaszcza dla większej
 ilości łączonych zdjęć.  Dla badanych zestawów zauważono nagły wzrost czasu działania programu powyżej sześćdziesięciu łączonych zdjęć. Analiza FWHM nie wykazała jednoznacznej przewagi żadnej z metod nakładania
-zdjęć na ostrość obrazu wynikowego. Wizualna porównanie wykorzystania algorytmów sugerują nieznaczne zmiany w jakości obrazu wynikowego na korzyść algorytmów złożonych (Kappa-Sigma Clipping oraz 
-Auto Adaptive Weighted Average) dla jednej godziny całkowitego czasu integracji fotografii. 
+zdjęć na ostrość obrazu wynikowego. Wizualne porównanie wykorzystnych algorytmów, dla jednej godziny całkowitego czasu integracji fotografii, sugerują nieznaczne zmiany w jakości obrazu wynikowego na korzyść algorytmów złożonych (Kappa-Sigma Clipping oraz 
+Auto Adaptive Weighted Average). 
 
-Wraz ze wzrostem całkowitego czasu integracji znacząco spada poziom szumu w obrazie wynikowym - należy jednak zbadać dokładny wpływ zastosowanych algorytmów oraz całkowitego czasu integracji 
-na poziom sygnału do szumu w obrazie wynikowym korzystając z obiektywnych metod pomiaru SNR w obrazach obiektów głębokiego nieba.
+Wraz ze wzrostem całkowitego czasu integracji znacząco spada poziom szumu w obrazie wynikowym. Należy jednak zbadać dokładny wpływ zastosowanych algorytmów oraz całkowitego czasu integracji 
+na poziom sygnału do szumu w obrazie wynikowym korzystając z obiektywnych metod pomiaru SNR.
 
-Dla obecnej implementacji programowej zaleca się korzystanie z algorytmów Auto Adaptive Weighted Average lub Kappa-Sigma Clipping dla użytkowników ceniących jakość obrazu wynikowego kosztem dłuższego
-czasu działania programu. Dla użytkowników preferujących krótszy czas działania aplikacji kosztem jakości obrazu zaleca się korzystanie a algorytmu średniej lub jeżeli występują jasne artefakty na zdjęciach
-wejściowych takie jak satelity czy meteory - algorytmu mediany. Dodatkowo w celu poprawy jakości obrazu wynikowego, dla użytkowników zaawansowanych, zaleca się stosowanie odpowiednio wykonanych zdjęć kalibracyjnych
+Dla obecnej implementacji programowej zaleca się korzystanie z algorytmów Auto Adaptive Weighted Average lub Kappa-Sigma Clipping dla użytkowników ceniących jakość obrazu wynikowego, kosztem dłuższego
+czasu działania programu. Dla użytkowników preferujących krótszy czas działania aplikacji, kosztem jakości obrazu, zaleca się korzystanie a algorytmu średniej lub jeżeli występują jasne artefakty na zdjęciach
+wejściowych, takie jak satelity czy meteory, algorytmu mediany. Dodatkowo w celu poprawy jakości obrazu wynikowego, dla użytkowników zaawansowanych, zaleca się stosowanie odpowiednio wykonanych zdjęć kalibracyjnych.
 
-W przyszłości planuje się rozszerzenie analizy o dokładne pomiary SNR, badanie zużycia pamięci przez poszczególne algorytmy oraz wpływu parametrów dla algorytmu Kappa-Sigma Clipping oraz 
-wpływu parametrów oraz wykorzystanej funkcji ważenia dla algorytmu Auto Adaptive Weighted Average na czas działania programu oraz jakość obrazu wynikowego korzystając z bardziej zaawansowanych technik badawczych.
+W przyszłości planuje się rozszerzenie analizy o dokładne pomiary SNR i badanie zużycia pamięci przez poszczególne algorytmy. Dodatkowo zostaną wykonane badania wpływu parametrów dla algorytmu Kappa-Sigma Clipping i
+wpływu parametrów i wykorzystanej funkcji ważenia dla algorytmu Auto Adaptive Weighted Average na czas działania programu oraz jakość obrazu wynikowego korzystając z bardziej zaawansowanych technik badawczych.
 
 Implementację programową należy rozszerzyć o obsługę większej ilości formatów plików wejściowych oraz o interfejs graficzny ułatwiający korzystanie z narzędzia. 
 W celu zwiększenia wydajności programu można rozważyć implementację algorytmów z wykorzystaniem przetwarzania równoległego, wykorzystania wektoryzacji SIMD lub implementację programu z wykorzystaniem kart graficznych.
-Do rozszerzenia funkcjonalności aplikacji można rozważyć implementacja dodatkowych metod nakładania zdjęć i możliwość dostosowania parametrów algorytmów przez użytkownika oraz rozszerzenia procesu rejestracji zdjęć o 
+Do rozszerzenia funkcjonalności aplikacji można rozważyć implementację dodatkowych metod nakładania zdjęć, możliwość dostosowania parametrów algorytmów przez użytkownika i rozszerzenie procesu rejestracji zdjęć o 
 wykorzystanie gwiazd referencyjnych z katalogów astronomicznych do potencjalnego zwiększenia dokładności rejestracji.
