@@ -1,8 +1,9 @@
 \section{Struktura kodu}\label{chapter:code_structure}
 
-Kod źródłowy został zorganizowany modularnie z możliwością dodania nowych komponentów i rozszerzenia funkcjonalności programu w przyszłości. Poniżej znajduje się ogólny opis struktury programu wraz z częściami rzeczywistego kodu źródłowego programu z wyjaśnieniami.
+Kod źródłowy został zorganizowany modularnie z możliwością dodania nowych komponentów i rozszerzenia funkcjonalności programu w przyszłości. Poniżej znajduje się ogólny opis struktury programu 
+wraz z częściami rzeczywistego kodu źródłowego programu z wyjaśnieniami.
 
-Główna część programu została rozbita na pliku źródłowe zgodnie z grafiką poniżej.
+Główna część programu została rozbita na pliki źródłowe zgodnie z grafiką poniżej.
 
 \dirtree{%
 .1 src/.
@@ -24,7 +25,15 @@ Główna część programu została rozbita na pliku źródłowe zgodnie z grafi
 
 \vspace{0.5cm}
 
-Klasa ImageIO jest odpowiedzialna za czytanie oraz zapisywanie plików użytych przez program. Do wczytywania plików RAW stosowanych przez aplikację użyta została biblioteka LibRaw. Stosowane do testowania zdjęcia są w formacie 14-bitowym .NEF jednak programowo stosuje się 16-bitowe kontenery do przechowywania informacji o pikselach. Przy wczytywaniu zdjęć w celu uzyskania fotografii bez skalowania i innych domyślnych opcji mogących wpłynąć na wartości pikseli na zdjęciu należy zastosować odpowiednie parametry. Do wczytywania innych plików takich jak fotografie kalibracyjne, zapisywane w formacie .tiff, użyto wbudowanego narzędzia z biblioteki OpenCV. Kod Źródłowy \ref{lst:single_load} przedstawia fragment implementacji funkcji do wczytywania pojedynczego zdjęcia - przedstawiono parametry użyte do prawidłowego wczytywania plików RAW. Do wczytywania wielu zdjęć stworzono nową funkcję, która obsługuje wczytywanie wielu zdjęć jednocześnie dzięki wielowątkowości.
+Klasa ImageIO jest odpowiedzialna za czytanie oraz zapisywanie plików użytych przez program. Do wczytywania plików RAW stosowanych przez aplikację użyta została biblioteka LibRaw. 
+Stosowane do testowania zdjęcia są w formacie 14-bitowym .NEF jednak programowo stosuje się 16-bitowe kontenery do przechowywania informacji o pikselach. Przy wczytywaniu zdjęć w celu uzyskania fotografii 
+bez skalowania i innych domyślnych opcji mogących wpłynąć na wartości pikseli na zdjęciu należy zastosować odpowiednie parametry. Do wczytywania innych plików takich jak fotografie kalibracyjne, 
+zapisywane w formacie .tiff, użyto wbudowanego narzędzia z biblioteki OpenCV. Kod Źródłowy \ref{lst:single_load} przedstawia fragment implementacji funkcji do wczytywania pojedynczego zdjęcia - 
+przedstawiono parametry użyte do prawidłowego wczytywania plików RAW. Parametry \texttt{output\_bps = 16} ustawia liczbę bitów na próbke na wyjściu - pozwala to przechować 14-bitowe dane z pliku NEF bez utraty
+rozdzielczości, \texttt{no\_auto\_bright = 1} wyłącza automatyczne skalowanie jasności - przeskalowanie jasności negatywnie wpływa na późniejsze etapy kalibracji, \texttt{use\_camera\_wb = 0} oraz 
+\texttt{use\_auto\_wb = 0} wyłączają użycie ustawień balansu bieli zapisanych w aparacie oraz automatycznego balansu bieli - pozwala to zachować dane bez korekcji kolorów narzucej przez profil aparatu.
+Współczynniki \texttt{gamm} oraz \texttt{user\_mul} odpowiadają za zachowanie liniowych wartości pikseli bez korekcji gamma oraz bez skalowania poszczególnych kanałów kolorów. Do wczytywania wielu zdjęć 
+stworzono nową funkcję, która obsługuje wczytywanie wielu zdjęć jednocześnie dzięki wielowątkowości.
 
 \begin{lstlisting}[language=C++, caption={Fragment funkcji \texttt{load} z klasy ImageIO}, label={lst:single_load}]
 rawProcessor.imgdata.params.output_bps = 16;
@@ -42,11 +51,21 @@ rawProcessor.imgdata.params.user_mul[3] = 1.0f;
 
 Klasa App pełni rolę modułu sterującego działanie aplikacją. Klasa została napisana jako fasada ukrywająca wewnętrzną złożoność użytych komponentów. 
 
-Klasa Calibrator odpowiada za operacje związane z przygotowaniem klatek kalibracyjnych oraz korekcję obrazów użytych przez użytkownika. Zawiera funkcje tworzące trzy użyte w programie klatki kalibracyjne i nałożenie ich na zdjęcia przy procesie kalibracji. Klatki kalibracyjne są tworzone poprzez nakładanie fotografii metodą mediany następnie ich odpowiednią normalizacją. 
+Klasa Calibrator odpowiada za operacje związane z przygotowaniem klatek kalibracyjnych oraz korekcję obrazów użytych przez użytkownika. Zawiera funkcje tworzące trzy użyte w programie 
+klatki kalibracyjne i nałożenie ich na zdjęcia przy procesie kalibracji. Klatki kalibracyjne są tworzone poprzez nakładanie fotografii metodą mediany, które są następnie odpowiednio normalizowane.
 
 Klasa ImageProcessor gromadzi funkcje związane z podstawowym przetwarzaniem obrazów. Klasa zawiera funkcje odpowiedzialne za korektę balansu bieli oraz przygotowaniem obrazu do wykrywania zdjęć poprzez wyodrębnienie tła obrazu.
 
-Klasa Register odpowiada za elementy rejestracji obrazu jakimi są detekcja gwiazd na fotografii oraz obliczenie odpowiednich transformacji przed nałożeniem zdjęć. Do wykrywania gwiazd na fotografiach użyto wbudowanej w bibliotekę OpenCV funkcji \texttt{SimpleBlodDetector} z odpowiednimi parametrami przedstawionymi w kodzie źródłowym \ref{lst:register_params}. Przed wykryciem gwiazd obraz należało przekonwertować na obraz ośmiobitowy z jednym kanałem - zdecydowano się na użycie kanału zielonego, gdyż oferuje on największą ilość informacji w klasycznych matrycach z filtrem Bayer \cite{Cheremkhin_2014}. Parametry zostały dobrane empirycznie na podstawie danych testowych - planowana liczba wykrytych gwiazd wynosiła od 50 do 150 co pozwala na wysokie prawdopodobieństwo pokrycia się przynajmniej trzech obiektów wymaganych do obliczenia transformacji obrazu. Parametr \texttt{starDetectionTreshold} został ustawiony na 0,7.
+Klasa Register odpowiada za elementy rejestracji obrazu jakimi są detekcja gwiazd na fotografii oraz obliczenie odpowiednich transformacji przed nałożeniem zdjęć. Do wykrywania gwiazd na fotografiach 
+użyto wbudowanej w bibliotekę OpenCV funkcji \texttt{SimpleBlodDetector} z odpowiednimi parametrami przedstawionymi w kodzie źródłowym \ref{lst:register_params}. 
+Parametry \texttt{filterByArea, filterByCircularity, filterByInertia, filterByConvexity, filterByColor} za włączenie odpowiednich filtrów podczas wykrywania obiektów.
+Parametry \texttt{minArea} oraz \texttt{maxArea} określają minimalny i maksymalny rozmiar wykrywanych obiektów w pikselach, \texttt{minCircularity} określa minimalny poziom okrągłości obiektu,
+\texttt{minInertiaRatio} określa minimalny poziom intercji obiektu - miary rozłożenia obiektu względme osi głównej, \texttt{minConvexity} określa minimalny poziom wypukłości obiektu, 
+a \texttt{blobColor} określa kolor wykrywanych obiektów (255 dla jasnych obiektów na ciemnym tle). Parametry zostały dobrane tak, żeby maksymalizować wykrycie jasnych obiektów o kształcie zbliżonym do koła
+na ciemnym tle, co odpowida gwiazdom na fotografiach astronomicznych. Przed wykryciem gwiazd obraz 
+należało przekonwertować na obraz ośmiobitowy z jednym kanałem - zdecydowano się na użycie kanału zielonego, gdyż oferuje on największą ilość informacji w klasycznych matrycach z filtrem Bayer 
+\cite{Cheremkhin_2014}. Parametry zostały dobrane empirycznie na podstawie danych testowych - planowana liczba wykrytych gwiazd wynosiła od 50 do 150 co pozwala na wysokie prawdopodobieństwo 
+pokrycia się przynajmniej trzech obiektów wymaganych do obliczenia transformacji obrazu. Parametr \texttt{starDetectionTreshold} został ustawiony na 0,7.
 
 \begin{lstlisting}[language=C++, caption={Fragment funkcji \texttt{detectStars} z klasy Register}, label={lst:register_params}]
 params.filterByArea = true;
@@ -62,13 +81,22 @@ params.filterByColor = true;
 params.blobColor = 255;
 \end{lstlisting}
 
-Obliczenie odpowiednich transformacji jest drugim etapem po rozpoznaniu gwiazd pozwalający na prawidłowe nakładanie zdjęć. Do obliczenia przesunięcia zdjęć zastosowano transformację afiniczną opartą za geometrii trójkątów i ich niezmiennikach. Dla zdjęcia referencyjnego należy najpierw wyznaczyć wszystkie możliwe trójki punktów. Zastosowano jednak ograniczenie do maksymalnie 5000 trójek w celu ograniczenia wymagań sprzętowych - większa ilość nie wpływa znacząco na jakość końcowej transformacji. Dla każdego trójkąta wyznaczane są dwa niezmienniki - stosunek średniego boku do najkrótszego oraz stosunek najdłuższego boku do najkrótszego. Następnie te same informacje są przetwarzane dla każdego zdjęcia docelowego. Porównuje się następnie trójkąty referencyjne z tymi z obrazu docelowego. Uznaje się, że trójkąt docelowy jest zgodny z trójkątem docelowym jeśli jego niezmienniki różnią się o mniej niż ustalona tolerancja \texttt{ratioTol = 0,03}. Do oszacowania transformacji po dopasowaniu trójkątów wyznaczana jest transformacja afiniczna jak przedstawiono w równaniu \eqref{eq:affine}. Programowo wykorzystano implementację \texttt{estimateAffinePartial2D} z biblioteki OpenCV.
+Obliczenie odpowiednich transformacji jest drugim etapem po rozpoznaniu gwiazd pozwalający na prawidłowe nakładanie zdjęć. Do obliczenia przesunięcia zdjęć zastosowano transformację afiniczną 
+opartą za geometrii trójkątów i ich niezmiennikach. Dla zdjęcia referencyjnego należy najpierw wyznaczyć wszystkie możliwe trójki punktów. Zastosowano jednak ograniczenie do maksymalnie 5000 
+trójek w celu ograniczenia wymagań sprzętowych - większa ilość nie wpływa znacząco na jakość końcowej transformacji. Dla każdego trójkąta wyznaczane są dwa niezmienniki - stosunek średniego 
+boku do najkrótszego oraz stosunek najdłuższego boku do najkrótszego. Następnie te same informacje są przetwarzane dla każdego zdjęcia docelowego. Porównuje się następnie trójkąty referencyjne 
+z tymi z obrazu docelowego. Uznaje się, że trójkąt docelowy jest zgodny z trójkątem referencyjnym jeśli jego niezmienniki różnią się o mniej niż ustalona tolerancja \texttt{ratioTol = 0,03}. 
+Do oszacowania transformacji po dopasowaniu trójkątów wyznaczana jest transformacja afiniczna jak przedstawiono w równaniu \eqref{eq:affine}. Programowo wykorzystano implementację 
+\texttt{estimateAffinePartial2D} z biblioteki OpenCV.
 
 \begin{equation}\label{eq:affine}
     T(x) = A \cdot x + b
 \end{equation}
 
-W celu ustalenia jakości transformacji program wykonuje tą transformację na punktach a następnie porównuje położenie gwiazd. Jeżeli odpowiadające sobie gwiazdy leżą po transformacji w odległości mniejszej niż tolerancja \texttt{inlierTol2 = 1.0} pikseli to program zalicza je jako prawidłową transformację. Poprawność transformacji bada się dla każdego punktu i jeżeli ilość odpowiadających gwiazd jest większa niż 80\% gwiazd znalezionych na obrazie referencyjnym uznaje się, że transformacja jest prawidłowa. Takie podejście zapewnia dobrej jakości obraz końcowy jest jednak wymagające obliczeniowo. Prawidłowe oszacowanie transformacji jest jednak niezbędnym elementem to uzyskania wysokiej jakości zdjęcia. 
+W celu ustalenia jakości transformacji program wykonuje tą transformację na punktach a następnie porównuje położenie gwiazd. Jeżeli odpowiadające sobie gwiazdy leżą po transformacji w odległości 
+mniejszej niż tolerancja \texttt{inlierTol2 = 1.0} pikseli to program zalicza je jako prawidłową transformację. Poprawność transformacji bada się dla każdego punktu i jeżeli ilość odpowiadających 
+gwiazd jest większa niż 80\% gwiazd znalezionych na obrazie referencyjnym uznaje się, że transformacja jest prawidłowa. Takie podejście zapewnia dobrej jakości obraz końcowy jest jednak wymagające
+ obliczeniowo. Prawidłowe oszacowanie transformacji jest jednak niezbędnym elementem to uzyskania wysokiej jakości zdjęcia. 
 
 W kodzie źródłowym \ref{lst:estimate_transform} przedstawiono fragment kodu użytego w programie odpowiadający za dopasowanie trójkątów pomiędzy obrazem referencyjnym a obrazem docelowym oraz oszacowanie transformacji afinicznej na podstawie zgodnych trójek gwiazd.
 
@@ -140,7 +168,10 @@ gdzie,
 
 \begin{tabular}{l}
 $M = w \cdot h \cdot c$ - liczba próbek (pikseli dla każdego kanału zdjęcia) \\
-$N$ – liczba klatek \\
+$w$ - szerokość obrazu w pikselach \\
+$h$ - wysokość obrazu w pikselach \\
+$c$ - liczba kanałów kolorów \\
+$N$ - liczba klatek \\
 \end{tabular}
 
 \vspace{0.5cm}
@@ -196,7 +227,10 @@ cv::Mat Stacker::stackMedian(const std::vector<cv::Mat>& images) {
 }
 \end{lstlisting}
 
-Kolejną metodą wykorzystywaną w programie, przedstawioną w kodzie źródłowym \ref{lst:stack_kappasigma}, jest metoda nakładania zdjęć Kappa-Sigma Clipping. Zaimplementowana funkcja stosowana jest do odrzucania wartości odstających na podstawie danych statystycznych wartości sygnału. Dla każdego piksela obliczana jest średnia oraz odchylenie standardowe, po czym wartości znajdujące się poza zakresem przedstawionym na równaniu \eqref{eq:kappa_outliers}. Algorytm jest iteracyjny, więc po każdym odrzuceniu obliczane są nowe wartości średniej i odchylenia standardowego stabilizując wynik.
+Kolejną metodą wykorzystywaną w programie, przedstawioną w kodzie źródłowym \ref{lst:stack_kappasigma}, jest metoda nakładania zdjęć Kappa-Sigma Clipping. Zaimplementowana funkcja stosowana 
+jest do odrzucania wartości odstających na podstawie danych statystycznych wartości sygnału. Dla każdego piksela obliczana jest średnia oraz odchylenie standardowe, po czym wartości znajdujące 
+się poza określonym zakresem są odrzucane. Zakres, poza którym wartości są odrzucane został przedstawiony na równaniu \eqref{eq:kappa_outliers}. 
+Algorytm jest iteracyjny, więc po każdym odrzuceniu obliczane są nowe wartości średniej i odchylenia standardowego stabilizując wynik.
 
 \begin{equation}\label{eq:kappa_outliers}
     \mu \pm \kappa \cdot \sigma
@@ -206,8 +240,8 @@ gdzie,
 
 \begin{tabular}{l}
 $\mu$ - średnia jasność piksela \\
-$\kappa$ –  parametr odchyleń od wartości średniej \\
-$\sigma$ – odchylenie standardowe jasności piksela \\
+$\kappa$ -  parametr odchyleń od wartości średniej \\
+$\sigma$ - odchylenie standardowe jasności piksela \\
 \end{tabular} 
 
 \vspace{0.5cm}
@@ -287,8 +321,8 @@ gdzie,
 
 \begin{tabular}{l}
 $\alpha$ - parametr regulujący czułość na odchylenia \\
-$\beta$ –  parametr regulujący szybkość spadku \\
-$r_i$ – różnica pomiędzy wartością piksela a aktualnym oszacowaniem sygnału \\
+$\beta$ -  parametr regulujący szybkość spadku \\
+$r_i$ - różnica pomiędzy wartością piksela a aktualnym oszacowaniem sygnału \\
 $w_i$ - przydzielona waga \\
 \end{tabular} 
 
