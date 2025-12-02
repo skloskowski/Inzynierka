@@ -33,7 +33,7 @@ Z dwóch obiektów astronomicznych wykonano serie fotografii, sposób wykonania 
 Szerokość połówkowa (\textit{full width at half maximum, FWHM}) to metryka opisująca szerokość profilu gwiazdy w połowie jej maksymalnej jasności, w przypadku implementacji wyznaczana w pikselach. 
 Niższe wartości FWHM oznaczają ostrzejsze gwiazdy i tym samym większą ilość widocznych szczegółów. Według literatury profil natężenia gwiazdy można oszacować funkcją Gaussa \cite{1992A&A...259..701C}. 
 W pracy zastosowano algorytm obliczający FWHM na podstawie dwuwymiarowego rozkładu Gaussa. Profil jasności gwiazdy na obrazie można oszacować funkcją przedstawioną w równaniu \eqref{eq:gauss}. 
-Po przyjęciu średniej wartości współczynnika rozmycia obrazu można obliczyć FWHM zgodnie z zależnością przedstawioną na równaniu \eqref{eq:fwhm}. 
+Po obliczeniu średniej arytmetycznej wartości współczynników rozmycia obrazu można obliczyć FWHM zgodnie z zależnością przedstawioną na równaniu \eqref{eq:fwhm}. 
 
 \begin{equation}\label{eq:gauss}
     I(x,y) = I_0 \text{exp} \left( -\frac{(x-x_c)^2}{2\sigma^2_x}-\frac{(y-y_c)^2}{2\sigma^2_y} \right)

@@ -9,9 +9,9 @@ obejmował czas wczytania zdjęć, wykonania kalibracji, rejestracji oraz nało�
 Poniżej przedstawiono wyniki eksperymentów dla czasu działania programu dla zestawów 244 oraz 1499. Czas działania programu mierzono dla czterech metod nakładania zdjęć: średnia, mediana, Kappa-Sigma 
 Clipping oraz Auto Adaptive Weighted Average. Wskazano różnice w czasie działania programu w zależności od całkowitego czasu integracji zdjęć. 
 Dla każdej kombinacji czasu integracji oraz badanego algorytmu wykonano pięć iteracji programu obliczono następnie średni czas działania oraz błąd. Jako błąd pomiaru przyjęto jedno odchylenie standardowe. 
-Przed obliczeniem ostatecznych wyników zdecydowano się na inwalidację błędów grubych, które zdefiniowano na czasy odbiegające znacznie od średniego czasu działania dla badanej kombinacji.
+Przed obliczeniem ostatecznych wyników zdecydowano się na odrzucenie błędów grubych, które zdefiniowano na czasy odbiegające znacznie od średniego czasu działania dla badanej kombinacji.
 Jedyny taki błąd gruby zaobserwowano dla pojedynczego badania kombinacji zestawu 244 metodą Auto Adaptive Weighted Average przy czasie integracji 60 minut. Czas błędu grubego odstawał o ponad 50\% od średniej
-wartości czasu działania dla tej kombinacji - po inwalidacji tego błędu grubego odchylenie standardowe pomiarów wyniosło poniżej 1 sekundy.
+wartości czasu działania dla tej kombinacji - po odrzuceniu tego błędu grubego odchylenie standardowe pomiarów wyniosło poniżej 1 sekundy.
 Na wykresach \ref{fig:zestaw244_time_chart} oraz \ref{fig:zestaw1499_time_chart} przedstawiono graficzne porównanie średnich czasów działannia programu w zależności do zastosowanej metody nakładania zdjęć 
 oraz całkowitego czasu integracji odpowiednio dla zestawu 244 oraz zestawu 1499. Dokładne wartości średnich oraz błędów przedstawiono odpowiednio w tabelach \ref{tab:zestaw244_time_table} 
 oraz \ref{tab:zestaw1499_time_table} dla zestawu 244 oraz zestawu 1499.
@@ -50,7 +50,7 @@ Metoda &  & \multicolumn{6}{c}{Czas integracji [min]} \\
  & $\sigma$ [s]       & 0.09  & 1.34   & 0.22   & 0.89   & 0.61   & 0.92   \\
 \bottomrule
 \end{tabular}
-\caption{Porównanie średnich czasów nakładania zdjęć w zależności od metody nakładania zdjęć i czasu integracji dla zestawów 244.}\
+\caption{Porównanie średnich czasów nakładania zdjęć i odchylenia standardowego pomiarów w zależności od metody nakładania zdjęć i czasu integracji dla zestawów 244}\
 \label{tab:zestaw244_time_table}
 \end{table}
 
@@ -88,7 +88,7 @@ Metoda &  & \multicolumn{6}{c}{Czas integracji [min]} \\
  & $\sigma$ [s]       & 0.38   & 0.77   & 2.96   & 0.84   & 2.29   & 43.84  \\
 \bottomrule
 \end{tabular}
-\caption{Porównanie średnich czasów nakładania zdjęć w zależności od metody nakładania zdjęć i czasu integracji dla zestawów 1499.}
+\caption{Porównanie średnich czasów nakładania zdjęć i odchylenia standardowego pomiarów w zależności od metody nakładania zdjęć i czasu integracji dla zestawów 1499}
 \label{tab:zestaw1499_time_table}
 \end{table}
 

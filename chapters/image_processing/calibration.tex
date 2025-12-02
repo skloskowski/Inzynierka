@@ -22,19 +22,21 @@ niezmienne dla nowocześniejszych matryc CMOS.
     Wykonywane są przy równomiernym oświetleniu całego pola widzenia - kierując teleskop lub obiektyw na jasne jednolite tło. Podczas kalibracji warto zwrócić uwagę na potrzebę odjęcia bias przed użyciem klatek flat na głównych fotografiach obiektu. 
 \end{itemize}
 
-    W celu osiągnięcia wymaganych efektów wykonuje się wiele klatek kalibracyjnych każdego rodzaju, a następnie przetwarza się je obliczając średnią wartość na każdym pikselu. Ostateczny teoretyczny opis nałożenia klatek można opisać tak jak w równaniu \eqref{eq:calibration}
+    W celu osiągnięcia wymaganych efektów wykonuje się wiele klatek kalibracyjnych każdego rodzaju, a następnie przetwarza 
+    się je obliczając średnią wartość na każdym pikselu. Ostateczny teoretyczny opis nałożenia klatek można opisać tak jak 
+    w równaniu \eqref{eq:calibration}
 
 \begin{equation}\label{eq:calibration}
-    I_{\text{calibrated}} = \frac{I_{\text{light}} - I_{\text{dark}}}{I_{\text{flat}} - I_{\text{bias}}}
+    I_{\text{calibrated (x,y)}} = \frac{I_{\text{light (x,y)}} - I_{\text{dark (x,y)}}}{I_{\text{flat (x,y)}} - I_{\text{bias (x,y)}}}
 \end{equation}
 
 gdzie: \\
 
 \begin{tabular}{l}
 
-    \( I_{\text{light}} \) - surowa klatka obiektu \\
-    \( I_{\text{dark}} \) - klatka dark \\
-    \( I_{\text{bias}} \) - klatka bias \\
-    \( I_{\text{flat}} \) - klatka flat
+    \( I_{\text{light (x,y)}} \) - wartości pikseli (x,y) w surowej klatce obiektu \\
+    \( I_{\text{dark (x,y)}} \) - wartości pikseli (x,y) w uśrednionej klatce dark \\
+    \( I_{\text{bias (x,y)}} \) - wartości pikseli (x,y) w uśrednionej klatce bias \\
+    \( I_{\text{flat (x,y)}} \) - wartości pikseli (x,y) w uśrednionej klatce flat
 
 \end{tabular}

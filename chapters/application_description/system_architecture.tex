@@ -3,18 +3,18 @@
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.5\linewidth]{images/mainflow.png}
-    \caption{Główne założenia działania programu.}
+    \caption{Główny przebieg działania programu.}
     \label{fig:mainflow}
 \end{figure}
 
-Na rysunku \ref{fig:mainflow} przedstawiono główny zarys działania programu. W celu realizacji zadań systemu oraz umożliwienia przyszłego rozwoju zdecydowano się na podział na odpowiednie,
+Na rysunku \ref{fig:mainflow} przedstawiono główny przebieg działania programu. W celu realizacji zadań systemu oraz umożliwienia przyszłego rozwoju zdecydowano się na podział na odpowiednie,
 niezależne od siebie, moduły. System składa się z modułów inicjalizacji, przetwarzania fotografii, rejestracji, kalibracji, nakładania zdjęć, 
 interakcji z plikami i sterującego z elementami interakcji z użytkownikiem. 
 
 \begin{itemize}
     \item Moduł inicjalizacji odpowiada za przygotowanie środowiska pracy. Tworzy odpowiednią strukturę katalogów składającą się z odpowiednich podkatalogów na fotografie kalibracyjne, główne zdjęcia light oraz
 katalog na pliki wynikowe. Dzięki implementacji tego modułu użytkownik nie musi ręcznie tworzyć odpowiedniech podkatalogów co ułatwi interakcję z programem oraz zmniejszy ryzyko błędów 
-wynikających z nieporawidłowej organizacji danych.
+wynikających z nieprawidłowej organizacji danych.
     \item Moduł przetwarzania fotografii odpowiada za podstawowe przygotowanie fotografii do dalszych etapów przetwarzania jak wykrywanie gwiazd oraz jest odpowiedzialny za końcową obróbkę 
     zdjęć po nałożeniu. Do odpowiedniego przygotowania plików przed wykrywaniem gwiazd należy przeprowadzić odpowiednią konwersję z danych surowych na dane z tylko jednym kanałem. Końcowa obróbka danych
     zakłada przetwarzanie zdjęć pod względem ustalenia odpowiedniego balansu bieli oraz normalizację jasności zdjęcia wynikowego.
