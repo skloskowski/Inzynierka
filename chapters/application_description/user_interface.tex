@@ -9,7 +9,7 @@ Funkcję programu podzielone na trzy główne elementy:
 \begin{itemize}
     \item Inicjalizacja obszaru roboczego.
     \item Tworzenie klatek kalibracyjnych.
-    \item Stacking zdjęć obiektów głębokiego nieba.
+    \item Rejestracja oraz stacking zdjęć obiektów głębokiego nieba.
 \end{itemize}
 
 Proces inicjalizacji programu polega na utworzeniu wykorzystywanej przez program struktury katalogów w wybranym folderze roboczym. Do inicjalizacji stosuje się poniższe polecenie.
@@ -24,7 +24,12 @@ W procesie kalibracji zdjęć łączy się dostarczone przez użytkownika fotogr
 .\FluxStack.exe --calibrate <workspace> [-d] [-b] [-f]
 \end{verbatim}
 
-W procesie stackowania zdjęcia z katalogu \texttt{lights} są łączone w obraz wynikowy działania programu korzystając z jednego z możliwych algorytmów. Algorytm wybiera się poprzez flagę \texttt{---method}. Dostępne algorytmy to średnia (\texttt{average}), mediana (\texttt{median}), kappa-sigma clipping (\texttt{kappasigma}) oraz auto adaptive weighted average (\texttt{adaptive}). Bez podania flagi \texttt{---method} program automatycznie wybiera metodę średniej. Dodatkowo użytkownik ma możliwość zapisania pliku wynikowego w wybranej przez niego lokalizacji korzystając z flagi \texttt{---out}. Bez podania flagi \texttt{---out} obraz zapisuje się w lokalizacji \texttt{masters\textbackslash stacked.tiff}. Poniżej znajduje się schemat polecenia pozwalającego na stacking obrazów.
+Do nakładania zdjęć obiektów należy najpierw wykonać odpowiednią rejestrację zdjęć. Polega ona na wyliczeniu przesunięć pomiędzy poszczególnymi zdjęciami w katalogu \texttt{lights}, a wybranym przez program zdjęciem referencyjnym. Proces wykonuje się automatycznie
+przy uruchomieniu polecenia z flagą \texttt{---stack}.
+W procesie stackowania zdjęcia z katalogu \texttt{lights} są łączone w obraz wynikowy działania programu korzystając z jednego z możliwych algorytmów. Algorytm wybiera się poprzez flagę \texttt{---method}. Dostępne algorytmy to średnia (\texttt{average}), 
+mediana (\texttt{median}), kappa-sigma clipping (\texttt{kappasigma}) oraz auto adaptive weighted average (\texttt{adaptive}). Bez podania flagi \texttt{---method} program automatycznie wybiera metodę średniej. Dodatkowo użytkownik ma możliwość zapisania 
+pliku wynikowego w wybranej przez niego lokalizacji korzystając z flagi \texttt{---out}. Bez podania flagi \texttt{---out} obraz zapisuje się w lokalizacji \texttt{masters\textbackslash stacked.tiff}. Poniżej znajduje się schemat polecenia pozwalającego na 
+stacking obrazów.
 
 \begin{verbatim}
 .\FluxStack.exe --stack <workspace> 
