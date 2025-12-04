@@ -98,7 +98,12 @@ mniejszej niż tolerancja \texttt{inlierTol2 = 1.0} pikseli to program zalicza j
 gwiazd jest większa niż 80\% gwiazd znalezionych na obrazie referencyjnym uznaje się, że transformacja jest prawidłowa. Takie podejście zapewnia dobrej jakości obraz końcowy jest jednak wymagające
  obliczeniowo. Prawidłowe oszacowanie transformacji jest jednak niezbędnym elementem to uzyskania wysokiej jakości zdjęcia. 
 
-W kodzie źródłowym \ref{lst:estimate_transform} przedstawiono fragment kodu użytego w programie odpowiadający za dopasowanie trójkątów pomiędzy obrazem referencyjnym a obrazem docelowym oraz oszacowanie transformacji afinicznej na podstawie zgodnych trójek gwiazd.
+W kodzie źródłowym \ref{lst:estimate_transform} przedstawiono fragment kodu użytego w programie odpowiadający za dopasowanie trójkątów pomiędzy obrazem referencyjnym a obrazem docelowym oraz oszacowanie 
+transformacji afinicznej na podstawie zgodnych trójek gwiazd. W liniach 4-7 przygotowane są trójki punktów z obrazu referencyjnego raz docelowego, które są wejściem do oszacowania transformacji w linii 8.
+Tranformacja zwraca macierz, której elementy są odczytywane w liniach 11-12. Następnie w liniach 14-23 sprawdzana jest jakość transformacji poprzez zliczenie ilości odpowiadających sobie gwiazd
+po wykonaniu transformacji. Obliczana jest nowa pozycja gwiazdy docelowej na podstawie równań: $t_x = a_{00} \cdot x + a_{01} \cdot y + a_{02} $, $t_y = a_{10} \cdot x + a_{11} \cdot y + a_{12}$.
+W linii 21 sprawdzana jest odległość pomiędzy pozycją gwiazdy po transformacji a gwiazdą referencyjną. Jeżeli odległość jest mniejsza niż ustalona tolerancja to licznik odpowiadających gwiazd jest 
+zwiększany.
 
 \begin{lstlisting}[language=C++, caption={Fragment funkcji \texttt{estimateTransformWithRefTriangles} z klasy Register}, label={lst:estimate_transform}]
 for (const auto& tri : refTriangles) {
@@ -228,8 +233,8 @@ cv::Mat Stacker::stackMedian(const std::vector<cv::Mat>& images) {
 \end{lstlisting}
 
 Kolejną metodą wykorzystywaną w programie, przedstawioną w kodzie źródłowym \ref{lst:stack_kappasigma}, jest metoda nakładania zdjęć Kappa-Sigma Clipping. Zaimplementowana funkcja stosowana 
-jest do odrzucania wartości odstających na podstawie danych statystycznych wartości sygnału. Dla każdego piksela obliczana jest średnia oraz odchylenie standardowe, po czym wartości znajdujące 
-się poza określonym zakresem są odrzucane. Zakres, poza którym wartości są odrzucane został przedstawiony na równaniu \eqref{eq:kappa_outliers}. 
+jest do odrzucania wartości odstających na podstawie danych statystycznych wartości sygnału. Dla każdego piksela obliczana jest średnia oraz odchylenie standardowe (linie 28-32), po czym wartości 
+znajdujące się poza określonym zakresem są odrzucane (linie 34-38). Zakres, poza którym wartości są odrzucane został przedstawiony na równaniu \eqref{eq:kappa_outliers}. 
 Algorytm jest iteracyjny, więc po każdym odrzuceniu obliczane są nowe wartości średniej i odchylenia standardowego stabilizując wynik.
 
 \begin{equation}\label{eq:kappa_outliers}
@@ -246,9 +251,14 @@ $\sigma$ - odchylenie standardowe jasności piksela \\
 
 \vspace{0.5cm}
 
-Metoda pozwala na efektywne usunięcie artefaktów ze zdjęcia, lecz w przeciwieństwie do algorytmu mediany nie traci przy tym na końcowym stosunku ilości sygnału do szumu. Dodatkową zaletą jest również brak ograniczeń precyzji do pojedynczej wartości lecz uśrednienie pikseli, które zostały po odrzuceniu. W przeciwieństwie do poprzednich dwóch algorytmów należy podać odpowiednie parametry działania programu - dopuszczalne odchylenie standardowe oraz ilość wymaganych iteracji na obrazie.
+Metoda pozwala na efektywne usunięcie artefaktów ze zdjęcia, lecz w przeciwieństwie do algorytmu mediany nie traci przy tym na końcowym stosunku ilości sygnału do szumu. Dodatkową zaletą jest również 
+brak ograniczeń precyzji do pojedynczej wartości lecz uśrednienie pikseli, które zostały po odrzuceniu. W przeciwieństwie do poprzednich dwóch algorytmów należy podać odpowiednie parametry działania 
+programu - dopuszczalne odchylenie standardowe oraz ilość wymaganych iteracji na obrazie.
 
-Implementacja programu posiada dodatkową optymalizację - w razie braku odcięcia pikseli algorytm zaprzestaje działanie przedwcześnie, unika tym niepotrzebnego liczenia bez zmiany końcowego wyniku. Ostatecznym zabezpieczeniem jest ochrona przed odcięciem wszystkich wartości - program wraca wtedy do poprzednich wartości i zaprzestaje odcinania. Podczas działania algorytmu ustawiono wartości \texttt{kappa = 3} oraz \texttt{maxIterations = 5}.
+Implementacja programu posiada dodatkową optymalizację - w razie braku odcięcia pikseli algorytm zaprzestaje działanie przedwcześnie, unika tym niepotrzebnego liczenia bez zmiany końcowego wyniku. 
+Ostatecznym zabezpieczeniem jest ochrona przed odcięciem wszystkich wartości - program wraca wtedy do poprzednich wartości i zaprzestaje odcinania. Podczas działania algorytmu ustawiono wartości 
+\texttt{kappa = 3} oraz \texttt{maxIterations = 5}. Implementacja algorytmu przygotowuje i oblicza każdy kanał kolorów osobno - proces dzielenia kanałów widoczny jest w liniach 12-18. Łączenie
+kanałów w jeden obraz wynikowy odbywa się w linii 52.
 
 \begin{lstlisting}[language=C++, caption={Funkcja \texttt{stackKappaSigmaClipping} z klasy Stacker}, label={lst:stack_kappasigma}]
 cv::Mat Stacker::stackKappaSigmaClipping(const std::vector<cv::Mat>& images, float kappa, int maxIterations) {
@@ -309,9 +319,11 @@ cv::Mat Stacker::stackKappaSigmaClipping(const std::vector<cv::Mat>& images, flo
 }
 \end{lstlisting}
 
-Ostatnią implementowaną metodą jest auto adaptive weighted average, której implementacje przedstawiono w kodzie źródłowym \ref{lst:stack_adaptive}. Metoda została oparta na procedurach opisanych w pracy Stetsona poświęconej technikom obróbki fotografii na matrycach CCD \cite{Stetson1994}.
+Ostatnią implementowaną metodą jest Auto Adaptive Weighted Average, której implementacje przedstawiono w kodzie źródłowym \ref{lst:stack_adaptive}. Metoda została oparta na procedurach opisanych w pracy 
+Stetsona poświęconej technikom obróbki fotografii na matrycach CCD \cite{Stetson1994}.
 
-W implementacji każdy wykonany pomiar (wartość piksela) otrzymuje wagę zależną od tego, jak bardzo odbiega od wartości oczekiwanej. Metoda adaptacyjna stopniowa zmniejsza wpływ pikseli odstających poziomem szumu czy takich, które posiadają inne artefakty. Podstawowym elementem działania programu jest zastosowana funkcja ważenia przedstawiona w równaniu \eqref{eq:adaptive_weight}.
+W implementacji każdy wykonany pomiar (wartość piksela) otrzymuje wagę zależną od tego, jak bardzo odbiega od wartości oczekiwanej. Metoda adaptacyjna stopniowa zmniejsza wpływ pikseli odstających 
+poziomem szumu czy takich, które posiadają inne artefakty. Podstawowym elementem działania programu jest zastosowana funkcja ważenia przedstawiona w równaniu \eqref{eq:adaptive_weight}.
 
 \begin{equation}\label{eq:adaptive_weight}
     w_i = \frac{1}{1 + (\frac{|r_i|}{\alpha})^\beta}
@@ -328,9 +340,19 @@ $w_i$ - przydzielona waga \\
 
 \vspace{0.5cm}
 
-Jako początkowe oszacowanie wartości pikseli używa się mediany wartości pikseli na każdym kanale. Dla każdej iteracji działania programu obliczana jest waga i aktualizowana jest nowa wartość. Dzięki braku odrzucania wartości jak w algorytmie Kappa-Sigma Clipping zmniejszanie wpływu nietypowych pikseli jest łagodniejsze a zachowanych jest więcej szczegółów niż w przypadku użycia algorytmów mediany. Istnieje również większa elastyczność, ponieważ można używać różne funkcje ważenia i stosować parametry $\alpha$ oraz $\beta$. 
+Jako początkowe oszacowanie wartości pikseli używa się mediany wartości pikseli na każdym kanale. Dla każdej iteracji działania programu obliczana jest waga i aktualizowana jest nowa wartość. 
+Dzięki braku odrzucania wartości jak w algorytmie Kappa-Sigma Clipping zmniejszanie wpływu nietypowych pikseli jest łagodniejsze, a zachowanych jest więcej szczegółów niż w przypadku użycia algorytmu 
+mediany. Istnieje również większa elastyczność, ponieważ można używać różne funkcje ważenia i stosować parametry $\alpha$ oraz $\beta$. 
 
-Wymaganie pamięciowe podstawowej implementacji algorytmu są jednak nieakceptowalne i wpływają znacząco dla czas działania programu spowodowane narzutami korzystania z pamięci wirtualnej komputera. Żeby spełnić wymaganie niefunkcjonalne \ref{nonfunc_7} i zwiększyć stabilność działania programu dla większej ilości zdjęć jak opisano w wymaganiu niefunkcjonalnym \ref{nonfunc_4} należało zaimplementować optymalizacje pamięciowe programu. W tym celu zastosowano technikę ograniczającą ilość załadowanych jednocześnie elementów do pamięci RAM dzięki podziale obrazu na mniejsze fragmenty i przetwarzaniu ich sekwencyjnie. W implementacji obliczana jest maksymalna liczba wierszy \texttt{tileH} zgodnie z ograniczeniem pamięciowym \texttt{maxBytes} wyznaczonym na 64MiB. Każdy kawałek jest konwertowany do dokładniejszego formatu i zwalniany przed wczytaniem kolejnego do pamięci.
+Wymaganie pamięciowe podstawowej implementacji algorytmu są jednak nieakceptowalne i wpływają znacząco dla czas działania programu spowodowane narzutami korzystania z pamięci wirtualnej komputera. 
+Żeby spełnić wymaganie niefunkcjonalne \ref{nonfunc_7} i zwiększyć stabilność działania programu dla większej ilości zdjęć, jak opisano w wymaganiu niefunkcjonalnym \ref{nonfunc_4}, należało zaimplementować 
+optymalizacje pamięciowe programu. W tym celu zastosowano technikę ograniczającą ilość załadowanych jednocześnie elementów do pamięci RAM dzięki podziale obrazu na mniejsze fragmenty i przetwarzaniu 
+ich sekwencyjnie. W implementacji obliczana jest maksymalna liczba wierszy \texttt{tileH} zgodnie z ograniczeniem pamięciowym \texttt{maxBytes} wyznaczonym na 64MiB (linie 9-14). Każdy kawałek jest konwertowany 
+do dokładniejszego formatu i zwalniany przed wczytaniem kolejnego do pamięci.
+
+Po przygotowaniu zmiennych (linie 19-26) i przygotowaniu płytek obrazu (linie 29-37) następuje główna pętla przetwarzająca iteracyjnie każdą płytkę obrazu. W liniach 54-57 obliczana jest początkowa mediana
+wartości. Następnie w liniach 60-79 wykonywna jest iteracyjna procedura ważenia i aktualizacji wartości pikseli zgodnie z równaniem \eqref{eq:adaptive_weight}. 
+Po przetworzeniu wszystkich płytek obraz jest konwertowany z powrotem do oryginalnego formatu i zwracany jako wynik działania funkcji.
 
 \begin{lstlisting}[language=C++, caption={Funkcja \texttt{stackAutoAdaptiveWeightedAverage} z klasy Stacker}, label={lst:stack_adaptive}]
 cv::Mat Stacker::stackAutoAdaptiveWeightedAverage(const std::vector<cv::Mat>& frames, float alpha, float beta, int iterations) {
