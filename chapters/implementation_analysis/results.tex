@@ -2,7 +2,7 @@
 
 W tym rozdziale przedstawiono wyniki badań czasu działania programu w zależności od zastosowanej metody nakładania zdjęc oraz całkowitego czasu integracji zdjęć. 
 Do interpretacji wyników należy pamiętać, że całkowity czas integracji nie jest porównywalny pomiędzy zestawami, ponieważ zestawy zdjęć wykorzysywały fotografie o różnym czasie naświetlania pojedynczego zdjęcia.
-Zestaw 1499 wykorzystywał zdjęcia o czasie naświetlania 60 sekund w porównaniu do zestawu 244, który wykorzystywał zdjęcia o czasie naświetlania 120 sekund. Dodatkowy wpływ na wyniki czasu działania
+Zestaw 1499 wykorzystywał zdjęcia o czasie naświetlania 60 sekund w porównaniu do zestawu 244, który wykorzystywał zdjęcia o czasie naświetlania 120 sekund.
 Dodatkowy wpływ na wyniki czasu działania ma również wykorzystanie klatek kalibracyjnych do korekcji zdjęć przed nałożeniem w zestawie 1499. Badany został całkowity czas działania programu, który
 obejmował czas wczytania zdjęć, wykonania kalibracji, rejestracji oraz nałożenia zdjęć. Do czasu działania programu nie wliczano jednak czasu potrzebnego na generację klatek kalibracyjnych.
 
@@ -203,7 +203,7 @@ Metoda &  & \multicolumn{6}{c}{Czas integracji [min]} \\
  & 15~px [px] & 5.091 & 5.070 & 5.145 & 5.162 & 5.148 & 5.147 \\
  & 19~px [px] & 5.669 & 5.639 & 5.633 & 5.607 & 5.612 & 5.608 \\
 \midrule
-\multirow{3}{*}{Kappa–Sigma Clip.}
+\multirow{3}{*}{Kappa-Sigma Clip.}
  & 11~px [px] & 4.492 & 4.503 & 4.530 & 4.570 & 4.616 & 4.645 \\
  & 15~px [px] & 5.090 & 5.101 & 5.121 & 5.119 & 5.133 & 5.161 \\
  & 19~px [px] & 5.650 & 5.638 & 5.583 & 5.610 & 5.613 & 5.607 \\
@@ -222,13 +222,17 @@ Metoda &  & \multicolumn{6}{c}{Czas integracji [min]} \\
 
 Poniżej przedstawino wizualne porównanie tych samych wycinków zdjęć wynikowych przedstawiających ten sam obiekt dla różnych algorytmów nakładania zdjęć. Każde ze zdjęć wynikowych zostało uzyskane poprzez
 nałożenie zdjęć z całkowitym czasem integracji 60 minut. Do wykonania zdjęć wynikowych obiektu 244 nie użyto klatek kalibracyjnych, natomiast do wykonania zdjęć wynikowych obiektu 1499
-użyto klatki kalibracyjne. Każda z fotografii wynikowych została zmodyfikowano w ten sam sposób w celu poprawy widoczności szczegółów na zdjęciach - zastosowano krzywe oraz zwiększono nasycenie kolorów.
+użyto klatki kalibracyjne. Każda z fotografii wynikowych została zmodyfikowano w ten sam sposób (w zakresie pojedynczego zestawu) w celu poprawy widoczności szczegółów na zdjęciach - zastosowano krzywe tonalne oraz zwiększono nasycenie kolorów.
+Krzywa tonalna to narzędzie do edycji zdjęć pozwalające na nieliniową zmianę jasności pikseli na zdjęciu. W kontekście astrofotografii zastosowanie krzywych tonalnych pozwala na
+wydobycie słabo widocznych szczegółów poprzez zwiększenie kontrakstu w ciemniejszych obszarach zdjęcia bez prześwietlenia jaśniejszych obszarów zdjęcia. Zmiana nasycenia kolorów
+to proces polegający na zmianie składowej barwy pikseli przy jednoczesnym zachowaniu ich składowej luminacji (jasności). Zwiększenie nasycenia kolorów na zdjęciach pozwala na uwydatnienie
+kolorów obiektów astronomicznych zwiększając kontrast pomiędzy strukturami mgławic a tłem nieba.
 Do edycji zdjęć użyto darmowy program GNU Image Manipulation Program (GIMP) możliwy do pobrania z oficjalnej strony producenta \cite{gimp}.
 Dla zestawu 244 obiektem fotografowanym był obiekt NGC 244 - galaktyka spiralna w gwiazdozbiorze Andromedy znana jako galaktyka Andromedy. 
 Porównanie wizualne zdjęć zestawu 244 przedstawiono na rysunku \ref{fig:zestaw244_60_comp}.
 Dla zestawu 1499 obiektem fotografowanym był obiekt NGC 1499 - mgławica emisyjna w gwiazdozbiorze Perseusza znana jako mgławica Kalifornia. 
 Porównanie wizualne zdjęć zestawu 1499 przedstawiono na rysunku \ref{fig:zestaw1499_60_comp}.
-Ze względu na różne warunki obserwacyjne, jasność nieba w zenicie oraz różny czas naświetlania pojedynczego zdjęcia, fotografie wynikowe nie powinny zostać porównywane pomiędzy zestawami.
+Ze względu na różne warunki obserwacyjne, jasność nieba w zenicie, niespójną edycję pomiędzy zestawami oraz różny czas naświetlania pojedynczego zdjęcia, fotografie wynikowe nie powinny zostać porównywane pomiędzy zestawami.
 
 \begin{figure}[!ht]
     \centering
@@ -247,11 +251,12 @@ Ze względu na różne warunki obserwacyjne, jasność nieba w zenicie oraz ró�
 \newpage
 \clearpage
 
-Poniżej przedstawiono wizualne porównanie tych samych wycinków zdjęć wynikowych dla różnych czasów integracji zdjęć. Obrazy wynikowe zostały wykonane korzystając z algorytmu Kappa-Sigma Clipping.
+Na rysunkach \ref{fig:zestaw244_noise_kappa_comp} i \ref{fig:zestaw1499_noise_kappa_comp} przedstawiono wizualne porównanie tych samych wycinków zdjęć wynikowych dla różnych czasów integracji zdjęć. Obrazy wynikowe zostały wykonane korzystając z algorytmu Kappa-Sigma Clipping.
 Każde ze zdjęć wynikowych zostało uzyskane poprzez nałożenie zdjęć z różnym całkowitym czasem integracji opisanym na rysunku.  Każda z fotografii wynikowych została zmodyfikowano w ten sam sposób
 w celu poprawy widoczności szczegółów na zdjęciach - zastosowano krzywe oraz zwiększono nasycenie kolorów. Do wykonania zdjęć wynikowych obiektu 244 nie użyto klatek kalibracyjnych,
 natomiast do wykonania zdjęć wynikowych obiektu 1499 użyto klatki kalibracyjne. Ze względu na różne warunki obserwacyjne, jasność nieba w zenicie oraz różny czas naświetlania pojedynczego zdjęcia,
-fotografie wynikowe nie powinny zostać porównywane pomiędzy zestawami.
+fotografie wynikowe nie powinny zostać porównywane pomiędzy zestawami. Na zmodyfikowanych fotografiach gwiazdy mają identyczną jasność. Poziom jasności całego zdjęcia różni się jednak 
+w zależności od czasu integracji z powodu ilości szumu. Tło, które zawiera szum wygląda niejednolicie i zawiera kolorowe ziarna - w idealnych warunkach tło powinno być jednolite i czarne.
 
 \begin{figure}[!ht]
     \centering

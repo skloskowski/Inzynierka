@@ -95,8 +95,8 @@ Do oszacowania transformacji po dopasowaniu trójkątów wyznaczana jest transfo
 
 W celu ustalenia jakości transformacji program wykonuje tą transformację na punktach a następnie porównuje położenie gwiazd. Jeżeli odpowiadające sobie gwiazdy leżą po transformacji w odległości 
 mniejszej niż tolerancja \texttt{inlierTol2 = 1.0} pikseli to program zalicza je jako prawidłową transformację. Poprawność transformacji bada się dla każdego punktu i jeżeli ilość odpowiadających 
-gwiazd jest większa niż 80\% gwiazd znalezionych na obrazie referencyjnym uznaje się, że transformacja jest prawidłowa. Takie podejście zapewnia dobrej jakości obraz końcowy jest jednak wymagające
- obliczeniowo. Prawidłowe oszacowanie transformacji jest jednak niezbędnym elementem to uzyskania wysokiej jakości zdjęcia. 
+gwiazd jest większa niż 80\% gwiazd znalezionych na obrazie referencyjnym uznaje się, że transformacja jest prawidłowa. Takie podejście zapewnia dobrej jakości obraz końcowy, jest jednak wymagające
+obliczeniowo. Prawidłowe oszacowanie transformacji jest jednak niezbędnym elementem to uzyskania wysokiej jakości zdjęcia. 
 
 W kodzie źródłowym \ref{lst:estimate_transform} przedstawiono fragment kodu użytego w programie odpowiadający za dopasowanie trójkątów pomiędzy obrazem referencyjnym a obrazem docelowym oraz oszacowanie 
 transformacji afinicznej na podstawie zgodnych trójek gwiazd. W liniach 4-7 przygotowane są trójki punktów z obrazu referencyjnego raz docelowego, które są wejściem do oszacowania transformacji w linii 8.
